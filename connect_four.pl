@@ -9,43 +9,44 @@ winner(Board,Winner) :- winnerToutesLignes(Board,Winner),!.
 winner(Board,Winner) :- winnerDiagonaleGauche(Board,Winner),!.
 winner(Board,Winner) :- winnerDiagonaleDroite(Board,Winner),!.
 
-winnerColonne([X,X,X,X,_,_], P) :- P==X, nonvar(P).
-winnerColonne([_,X,X,X,X,_], P) :- P==X, nonvar(P).
-winnerColonne([_,_,X,X,X,X], P) :- P==X, nonvar(P).
+winnerColonne([P,Q,R,S,_,_], P) :- P==Q, Q==R, R==S, nonvar(P).
+winnerColonne([_,P,Q,R,S,_], P) :- P==Q, Q==R, R==S, nonvar(P).
+winnerColonne([_,_,P,Q,R,S], P) :- P==Q, Q==R, R==S,  nonvar(P).
 
 % Itération sur les colonnes pour vérifier si une des colonnes est
 % gagnante
 winnerToutesColonnes([X|_],Winner) :- winnerColonne(X,Winner),!.
 winnerToutesColonnes([_|C],Winner) :- winnerToutesColonnes(C,Winner).
 
-winnerLigne([X,X,X,X,_,_,_], P) :- P==X, nonvar(P).
-winnerLigne([_,X,X,X,X,_,_], P) :- P==X, nonvar(P).
-winnerLigne([_,_,X,X,X,X,_], P) :- P==X, nonvar(P).
-winnerLigne([_,_,_,X,X,X,X], P) :- P==X, nonvar(P).
+winnerLigne([P,Q,R,S,_,_,_], P) :- P==Q, Q==R, R==S,  nonvar(P).
+winnerLigne([_,P,Q,R,S,_,_], P) :- P==Q, Q==R, R==S,  nonvar(P).
+winnerLigne([_,_,P,Q,R,S,_], P) :- P==Q, Q==R, R==S,  nonvar(P).
+winnerLigne([_,_,_,P,Q,R,S], P) :- P==Q, Q==R, R==S,  nonvar(P).
 
 %Itération sur les lignes
 winnerToutesLignes([[A|_], [B|_], [C|_], [D|_], [E|_], [F|_], [G|_]], Winner) :-
 winnerLigne([A,B,C,D,E,F,G], Winner) ,!.
 winnerToutesLignes([[_|Q1], [_|Q2], [_|Q3], [_|Q4], [_|Q5], [_|Q6], [_|Q7]], Winner) :-
-winnerLigne([Q1,Q2,Q3,Q4,Q5,Q6,Q7], Winner) .
+winnerToutesLignes([Q1,Q2,Q3,Q4,Q5,Q6,Q7], Winner) .
 
-winnerDiagonaleGauche([[X,_,_,_,_,_], [_X,_,_,_,_], [_,_,X,_,_,_], [_,_,_,X,_,_],_,_,_], X) :-  nonvar(X).
-winnerDiagonaleGauche([[_,X,_,_,_,_], [_,_X,_,_,_], [_,_,_,X,_,_], [_,_,_,_,X,_],_,_,_], X) :- nonvar(X).
-winnerDiagonaleGauche([[_,_,X,_,_,_], [_,_,_X,_,_], [_,_,_,_,X,_], [_,_,_,_,_,X],_,_,_], X) :- nonvar(X).
+winnerDiagonaleGauche([[P,_,_,_,_,_], [_,Q,_,_,_,_], [_,_,R,_,_,_], [_,_,_,S,_,_],_,_,_], P) :- P==Q, Q==R, R==S, nonvar(P).
+winnerDiagonaleGauche([[_,P,_,_,_,_], [_,_,Q,_,_,_], [_,_,_,R,_,_], [_,_,_,_,S,_],_,_,_], P) :- P==Q, Q==R, R==S, nonvar(P).
+winnerDiagonaleGauche([[_,_,P,_,_,_], [_,_,_,Q,_,_], [_,_,_,_,R,_], [_,_,_,_,_,S],_,_,_], P) :- P==Q, Q==R, R==S,  nonvar(P).
 
-winnerDiagonaleGauche([_, [X,_,_,_,_,_], [_X,_,_,_,_], [_,_,X,_,_,_], [_,_,_,X,_,_],_,_], X) :- nonvar(X).
-winnerDiagonaleGauche([_, [_,X,_,_,_,_], [_,_X,_,_,_], [_,_,_,X,_,_], [_,_,_,_,X,_],_,_], X) :- nonvar(X).
-winnerDiagonaleGauche([_, [_,_,X,_,_,_], [_,_,_X,_,_], [_,_,_,_,X,_], [_,_,_,_,_,X],_,_], X) :- nonvar(X).
+winnerDiagonaleGauche([_, [P,_,_,_,_,_], [_,Q,_,_,_,_], [_,_,R,_,_,_], [_,_,_,S,_,_],_,_], P) :- P==Q, Q==R, R==S, nonvar(P).
+winnerDiagonaleGauche([_, [_,P,_,_,_,_], [_,_,Q,_,_,_], [_,_,_,R,_,_], [_,_,_,_,S,_],_,_], P) :- P==Q, Q==R, R==S, nonvar(P).
+winnerDiagonaleGauche([_, [_,_,P,_,_,_], [_,_,_,Q,_,_], [_,_,_,_,R,_], [_,_,_,_,_,S],_,_], P) :- P==Q, Q==R, R==S,  nonvar(P).
 
-winnerDiagonaleGauche([_,_, X,[_,_,_,_,_], [_X,_,_,_,_], [_,_,X,_,_,_], [_,_,_,X,_,_],_], X) :- nonvar(X).
-winnerDiagonaleGauche([_,_, [_,X,_,_,_,_], [_,_X,_,_,_], [_,_,_,X,_,_], [_,_,_,_,X,_],_], X) :- nonvar(X).
-winnerDiagonaleGauche([_,_, [_,_,X,_,_,_], [_,_,_X,_,_], [_,_,_,_,X,_], [_,_,_,_,_,X],_], X) :- nonvar(X).
+winnerDiagonaleGauche([_,_, [P,_,_,_,_,_], [_,Q,_,_,_,_], [_,_,R,_,_,_], [_,_,_,S,_,_],_], P) :- P==Q, Q==R, R==S, nonvar(P).
+winnerDiagonaleGauche([_,_, [_,P,_,_,_,_], [_,_,Q,_,_,_], [_,_,_,R,_,_], [_,_,_,_,S,_],_], P) :- P==Q, Q==R, R==S, nonvar(P).
+winnerDiagonaleGauche([_,_, [_,_,P,_,_,_], [_,_,_,Q,_,_], [_,_,_,_,R,_], [_,_,_,_,_,S],_], P) :- P==Q, Q==R, R==S, nonvar(P).
 
-winnerDiagonaleGauche([_,_,_, [X,_,_,_,_,_], [_X,_,_,_,_], [_,_,X,_,_,_], [_,_,_,X,_,_]], X) :- nonvar(X).
-winnerDiagonaleGauche([_,_,_,[_,X,_,_,_,_], [_,_X,_,_,_], [_,_,_,X,_,_], [_,_,_,_,X,_]], X) :- nonvar(X).
-winnerDiagonaleGauche([_,_,_,[_,_,X,_,_,_], [_,_,_X,_,_], [_,_,_,_,X,_], [_,_,_,_,_,X]], X) :- nonvar(X).
+winnerDiagonaleGauche([_,_,_, [P,_,_,_,_,_], [_,Q,_,_,_,_], [_,_,R,_,_,_], [_,_,_,S,_,_]], P) :- P==Q, Q==R, R==S, nonvar(P).
+winnerDiagonaleGauche([_,_,_,[_,P,_,_,_,_], [_,_,Q,_,_,_], [_,_,_,R,_,_], [_,_,_,_,S,_]], P) :-  P==Q, Q==R, R==S, nonvar(P).
+winnerDiagonaleGauche([_,_,_,[_,_,P,_,_,_], [_,_,_,Q,_,_], [_,_,_,_,R,_], [_,_,_,_,_,S]], P) :-  P==Q, Q==R, R==S, nonvar(P).
 
-winnerDiagonaleDroite(Board,Winner) :- reverse(Board, BoardInverse), winnerDiagonaleGauche(BoardInverse, Winner).
+winnerDiagonaleDroite(Board,Winner) :- reverse(Board, BoardInverse),
+    winnerDiagonaleGauche(BoardInverse, Winner).
 
 isBoardFull([]).
 isBoardFull([H|C]) :- isColonneFull(H), isBoardFull(C).
@@ -60,7 +61,7 @@ changePlayer('2','1').
 
 
 %IA ernvoie colonne complète
-ia(Board, IndexColonne,_) :- repeat, I is random(7), IndexColonne is I+1,  nth1(IndexColonne, Board, Elem), not(isColonneFull(Elem)), writeln(IndexColonne), !.
+ia(Board, IndexColonne,_) :- repeat, I is random(7), IndexColonne is I+1,  nth1(IndexColonne, Board, Elem), not(isColonneFull(Elem)), write('Chose column '),writeln(IndexColonne), !.
 
 
 
@@ -91,10 +92,10 @@ updateColonne(Colonne,NewColonne, Player) :- Colonne = NewColonne,
 
 
 %Affichage du jeu : ligne par ligne
-displayBoard(B) :- writeln('*----------*'),
+displayBoard(B) :- writeln('*------------*'),
     printLigne(6,B), printLigne(5,B), printLigne(4,B),
     printLigne(3,B), printLigne(2,B), printLigne(1,B),
-    writeln('*----------*').
+    writeln('*------------*').
 
 %Affichage d'une ligne
 printLigne(L, B) :- nth1(1,B,C1), printVal(C1,L),
@@ -108,8 +109,8 @@ printLigne(L, B) :- nth1(1,B,C1), printVal(C1,L),
 
 % Afficher le contenu de la case à l'indice N de la colonne C (?, x or
 % o)
-printVal(C,N) :- nth1(N,C,Val), var(Val), write('?'), ! .
-printVal(C,N) :- nth1(N,C,Val), write(Val).
+printVal(C,N) :- nth1(N,C,Val), var(Val), write('? '), ! .
+printVal(C,N) :- nth1(N,C,Val), write(Val), write(' ').
 
 
 %Début du jeu
