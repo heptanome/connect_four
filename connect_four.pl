@@ -13,8 +13,7 @@ winnerColonne([P,Q,R,S,_,_], P) :- P==Q, Q==R, R==S, nonvar(P).
 winnerColonne([_,P,Q,R,S,_], P) :- P==Q, Q==R, R==S, nonvar(P).
 winnerColonne([_,_,P,Q,R,S], P) :- P==Q, Q==R, R==S,  nonvar(P).
 
-% Itération sur les colonnes pour vérifier si une des colonnes est
-% gagnante
+% Iteration sur les colonnes pour verifier si une des colonnes est gagnante
 winnerToutesColonnes([X|_],Winner) :- winnerColonne(X,Winner),!.
 winnerToutesColonnes([_|C],Winner) :- winnerToutesColonnes(C,Winner).
 
@@ -23,7 +22,7 @@ winnerLigne([_,P,Q,R,S,_,_], P) :- P==Q, Q==R, R==S,  nonvar(P).
 winnerLigne([_,_,P,Q,R,S,_], P) :- P==Q, Q==R, R==S,  nonvar(P).
 winnerLigne([_,_,_,P,Q,R,S], P) :- P==Q, Q==R, R==S,  nonvar(P).
 
-%Itération sur les lignes
+%Iteration sur les lignes
 winnerToutesLignes([[A|_], [B|_], [C|_], [D|_], [E|_], [F|_], [G|_]], Winner) :-
 winnerLigne([A,B,C,D,E,F,G], Winner) ,!.
 winnerToutesLignes([[_|Q1], [_|Q2], [_|Q3], [_|Q4], [_|Q5], [_|Q6], [_|Q7]], Winner) :-
@@ -50,17 +49,17 @@ winnerDiagonaleDroite(Board,Winner) :- reverse(Board, BoardInverse),
 
 isBoardFull([]).
 isBoardFull([H|C]) :- isColonneFull(H), isBoardFull(C).
-%Itérer sur toutes les colonnes et pour chaque colonne.
+%Iterer sur toutes les colonnes et pour chaque colonne.
 isColonneFull(C) :- nth1(6, C, X), nonvar(X).
 
-%On applique le coup joué
+%On applique le coup du joueur
 applyIt(Board,NewBoard) :- retract(board(Board)), assert(board(NewBoard)).
 % Predicate to get the next player
 changePlayer('1','2').
 changePlayer('2','1').
 
 
-%IA ernvoie colonne complète
+%IA ernvoie colonne complete
 ia(Board, IndexColonne,_) :- repeat, I is random(7), IndexColonne is I+1,  nth1(IndexColonne, Board, Elem), not(isColonneFull(Elem)), write('Chose column '),writeln(IndexColonne), !.
 
 
@@ -71,7 +70,7 @@ play(_) :- gameover(Winner), !, write('Game is Over. Winner: '), writeln(Winner)
 play(Player) :- write('New turn for:'), writeln(Player), board(Board), displayBoard(Board),ia(Board, IndexColonne, Player), playMove(Board, IndexColonne, NewBoard, Player),  applyIt(Board, NewBoard), changePlayer(Player,NextPlayer), play(NextPlayer).
 
 
-% Joue le coup (pour l'instant par du principe que la colonne donnée
+% Joue le coup (pour l'instant par du principe que la colonne donnee
 % n'est pas pleine
 
 
@@ -107,13 +106,13 @@ printLigne(L, B) :- nth1(1,B,C1), printVal(C1,L),
     nth1(7,B,C7), printVal(C7,L),
     writeln('').
 
-% Afficher le contenu de la case à l'indice N de la colonne C (?, x or
+% Afficher le contenu de la case a l'indice N de la colonne C (?, x or
 % o)
-printVal(C,N) :- nth1(N,C,Val), var(Val), write('? '), ! .
+printVal(C,N) :- nth1(N,C,Val), var(Val), write('  '), ! .
 printVal(C,N) :- nth1(N,C,Val), write(Val), write(' ').
 
 
-%Début du jeu
+%Debut du jeu
 init :- length(C1,6), length(C2,6),length(C3,6),
     length(C4,6),length(C5,6),length(C6,6),length(C7,6),
     assert(board([C1,C2,C3,C4,C5,C6,C7])), play('1').
