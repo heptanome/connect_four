@@ -14,7 +14,7 @@ isColonneFull(C) :- nth1(6, C, X), nonvar(X).
 
 %On applique le coup du joueur
 applyIt(Board,NewBoard) :- retract(board(Board)), assert(board(NewBoard)).
-% Predicate to get the next player
+%Predicate to get the next player
 changePlayer('1','2').
 changePlayer('2','1').
 
@@ -22,14 +22,13 @@ changePlayer('2','1').
 ia(Board, IndexColonne,_) :- repeat, I is random(7), IndexColonne is I+1,  nth1(IndexColonne, Board, Elem), not(isColonneFull(Elem)), write('Chose column '),writeln(IndexColonne), !.
 
 
-% Game is over, we cut to stop the search, and display the winner.
+%Game is over, we cut to stop the search, and display the winner.
 play(_) :- gameover(Winner), !, write('Game is Over. Winner: '), writeln(Winner), board(Board),displayBoard(Board).
-% The game is not over, we play the next turn
+%The game is not over, we play the next turn
 play(Player) :- write('New turn for:'), writeln(Player), board(Board), displayBoard(Board),ia(Board, IndexColonne, Player), playMove(Board, IndexColonne, NewBoard, Player),  applyIt(Board, NewBoard), changePlayer(Player,NextPlayer), play(NextPlayer).
 
 
-% Joue le coup (pour l'instant par du principe que la colonne donnee
-% n'est pas pleine
+%Joue le coup (pour l'instant par du principe que la colonne donnee n'est pas pleine
 playMove(Board,IndexColonne,NewBoard,P) :- Board=NewBoard,
     nth1(IndexColonne, Board, Colonne),
     updateColonne(Colonne, NewColonne, P),

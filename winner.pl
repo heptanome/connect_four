@@ -16,7 +16,7 @@ winnerColonne([_,P,Q,R,S,_], P) :-
 winnerColonne([_,_,P,Q,R,S], P) :-
     P==Q, Q==R, R==S,  nonvar(P).
 
-% Iteration sur les colonnes pour verifier si une des colonnes est gagnante
+%Iteration sur les colonnes pour verifier si une des colonnes est gagnante
 winnerToutesColonnes([X|_],Winner) :-
     winnerColonne(X,Winner),!.
 winnerToutesColonnes([_|C],Winner) :-
