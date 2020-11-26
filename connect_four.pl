@@ -15,7 +15,7 @@ isBoardFull([H|C]) :- isColonneFull(H), isBoardFull(C).
 
 %On applique le coup du joueur
 applyIt(Board,NewBoard) :- retract(board(Board)), assert(board(NewBoard)).
-% Predicate to get the next player
+%Predicate to get the next player
 changePlayer('1','2').
 changePlayer('2','1').
 
@@ -29,9 +29,10 @@ readColonne(X) :-
     nth1(Index, [1,2,3,4,5,6,7], X),
     not(isColonneFull(Index)).
 
-% Game is over, we cut to stop the search, and display the winner.
-play(_,_,_) :- gameover(Winner), !, write('Game is Over. Winner: '), writeln(Winner), board(Board),displayBoard(Board).
-% The game is not over, we play the next turn
+%Game is over, we cut to stop the search, and display the winner.
+play(_) :- gameover(Winner), !, write('Game is Over. Winner: '), writeln(Winner), board(Board),displayBoard(Board).
+%The game is not over, we play the next turn
+play(Player) :- write('New turn for:'), writeln(Player), board(Board), displayBoard(Board),ia(Board, IndexColonne, Player), playMove(Board, IndexColonne, NewBoard, Player),  applyIt(Board, NewBoard), changePlayer(Player,NextPlayer), play(NextPlayer).
 
 % in case the player 1 is human
 % Heur 1: heuristic used by AI 1, same goes for Heur2
@@ -67,10 +68,8 @@ play(Player, Heur1, Heur2) :-
     changePlayer(Player,NextPlayer),
     play(NextPlayer, Heur1, Heur2).
 
-% Joue le coup (pour l'instant par du principe que la colonne donnee
-% n'est pas pleine
-playMove(Board,IndexColonne,NewBoard,P) :-
-    Board=NewBoard,
+%Joue le coup (pour l'instant par du principe que la colonne donnee n'est pas pleine
+playMove(Board,IndexColonne,NewBoard,P) :- Board=NewBoard,
     nth1(IndexColonne, Board, Colonne),
     updateColonne(Colonne, NewColonne, P),
     nth1(IndexColonne, NewBoard, NewColonne).

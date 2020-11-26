@@ -7,7 +7,7 @@ displayBoard(B) :-
     printLigne(3,B), printLigne(2,B), printLigne(1,B),
     writeln('*------------*').
 
-%Affichage d'une ligne
+%Affichage d une ligne
 printLigne(L, B) :-
     nth1(1,B,C1), printVal(C1,L),
     nth1(2,B,C2), printVal(C2,L),
@@ -18,7 +18,7 @@ printLigne(L, B) :-
     nth1(7,B,C7), printVal(C7,L),
     writeln('').
 
-% Afficher le contenu de la case a l'indice N de la colonne C (?, x or o)
+%Afficher le contenu de la case a l indice N de la colonne C (?, x or o)
 printVal(C,N) :-
     nth1(N,C,Val), var(Val), write('  '), ! .
 printVal(C,N) :-
