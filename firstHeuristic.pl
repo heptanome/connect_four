@@ -1,6 +1,10 @@
 %:- module(firstHeuristic, [firstHeuristic/1]).
 
-%Un Move est l index de la colonne sur laquelle est joué le pion
+%Une heuristique comprend
+% - Player : 1 ou 2
+% - Move : indice de la colonne dans laquelle le coup est a % -
+% - CoutColonne : nb de jeton max aligné dans une colonne (en bordure
+% superieure)
 heuristic(Board, Player, Move, Cout) :-
     colonneAligne(Board, Player, Move, CoutColonne),
     ligneAligne(Board, Player, NumberLigne),
@@ -15,11 +19,11 @@ colonneAligne(Board, Player, Move, CoutColonne) :-
     compteColonne(Player, NewColonne, CoutColonne).   
 
 %FIXME: dans le cas ou il y a des cases vides dans le tableau ça compte le resultat comme un 1 (cf test)
-%compteColonne(+Player, +Colonne, -CoutColonne)
 %Cette methode compte le nombre de pions du joueur Player alignés jusqu à trouver un jeton de l autre joueur.
-%Ce nombre calculé se trouve dans la variable CoutColonne.
-%Player est le numéro du joueur actuel
-%Colonne est la colonne sur laquelle on calcule le nombre de jetons alignés
+%compteColonne(+Player, +Colonne, -CoutColonne) :
+% - Player est le numéro du joueur actuel
+% - Colonne est la colonne sur laquelle on calcule le nombre de jetons alignés
+% - CoutColonne est le nombre de jetons alignés du joueur.
 compteColonne(_, [], 0).
 compteColonne(Player, [H|_], 0) :-
     H \= Player.
