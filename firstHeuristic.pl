@@ -1,15 +1,14 @@
 %:- module(firstHeuristic, [firstHeuristic/1]).
 
+%heuristic(+Board, +Player, -Cout)
 %Une heuristique comprend
-% - Player : 1 ou 2
-% - Move : indice de la colonne dans laquelle le coup est joué
-% - CoutColonne : nb de jeton max aligné dans une colonne (en bordure superieure)
-heuristic(Board, Player, Move, Cout) :-
-    colonneAligne(Board, Player, Move, CoutColonne),
-    ligneAligne(Board, Player, NumberLigne),
-    diagonaleGaucheAligne(Board, Player, NumberDiagG),
-    diagonaleDroiteAligne(Board, Player, NumberDiagD),
-    Cout is 4-max(CoutColonne, max(NumberLigne, max(NumberDiagG,NumberDiagD))).
+% - Board : état du plateau après avoir joué le coup
+% - Player : numéro du joueur 1 ou 2
+% - Cout : cout du board
+heuristic(Board, Player, Cout) :-
+    getListCoutColonne(Board, Player, ListCouts),
+    max_list(ListCouts, CoutMaxColonne),
+    Cout is 4-CoutMaxColonne.
 
 %Cette methode compte le nombre de pions alignés d un joueur sur une colonne en partant de la fin de la colonne.
 %compteAligne(+Board, +Player, +Move, -CoutColonne) :
@@ -17,11 +16,12 @@ heuristic(Board, Player, Move, Cout) :-
 % - Player est le numéro du joueur actuel
 % - Move est indice de la colonne sur laquelle on calcule le nombre de jetons alignés
 % - CoutColonne est le nombre de jetons alignés du joueur.   
-colonneAligne(Board, Player, Move, CoutColonne) :-
+getListCoutColonne([], _, []).
+getListCoutColonne([ActualColonne|Rest], Player, [Cout|List]) :-
 	nonvar(Player),
-    nth1(Move, Board, Colonne),
-    reverse(Colonne, NewColonne),
-    compteColonne(Player, NewColonne, CoutColonne).   
+    reverse(ActualColonne, ReversedColonne),
+    compteColonne(Player, ReversedColonne, Cout),
+    getListCoutColonne(Rest, Player, List).
 
 %Cette methode compte le nombre de pions du joueur Player alignés jusqu à trouver un jeton de l autre joueur.
 %compteColonne(+Player, +Colonne, -CoutColonne) :
@@ -39,9 +39,5 @@ compteColonne(Player, [H|T], NumberColonne) :-
     compteColonne(Player, T, Compteur),
     NumberColonne is Compteur+1.
     
-testColonneAligne(Player, IndiceColonne, Cout) :- colonneAligne([[1, 1, 1, _], [1, 2, 1, 1], [1, 1, 1, 1], [2, 1, 1, _]], Player, IndiceColonne, Cout).
-    
-%TODO: faire la definition de ligneAligne, diagonaleGaucheAligne et diagonaleDroiteAligne
-ligneAligne(_, _, 0).
-diagonaleGaucheAligne(_, _, 0).
-diagonaleDroiteAligne(_, _, 0).
+testColonneAligne(Player, List) :- getListCoutColonne([[1, 1, 1, _], [1, 2, 1, _], [1, 2, _, _], [2, 1, 1, _]], Player, List).
+testHeuristic(Player, Cout) :- heuristic([[1, 2, 1, _], [1, 2, 2, _], [1, 2, _, _], [2, 2, 2, _]], Player, Cout).
