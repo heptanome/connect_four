@@ -2,7 +2,7 @@
 
 %Une heuristique comprend
 % - Player : 1 ou 2
-% - Move : indice de la colonne dans laquelle le coup est a % -
+% - Move : indice de la colonne dans laquelle le coup est joué
 % - CoutColonne : nb de jeton max aligné dans une colonne (en bordure superieure)
 heuristic(Board, Player, Move, Cout) :-
     colonneAligne(Board, Player, Move, CoutColonne),
@@ -10,7 +10,13 @@ heuristic(Board, Player, Move, Cout) :-
     diagonaleGaucheAligne(Board, Player, NumberDiagG),
     diagonaleDroiteAligne(Board, Player, NumberDiagD),
     Cout is 4-max(CoutColonne, max(NumberLigne, max(NumberDiagG,NumberDiagD))).
-    
+
+%Cette methode compte le nombre de pions alignés d un joueur sur une colonne en partant de la fin de la colonne.
+%compteAligne(+Board, +Player, +Move, -CoutColonne) :
+% - Board est le plateau de jeu actuel
+% - Player est le numéro du joueur actuel
+% - Move est indice de la colonne sur laquelle on calcule le nombre de jetons alignés
+% - CoutColonne est le nombre de jetons alignés du joueur.   
 colonneAligne(Board, Player, Move, CoutColonne) :-
 	nonvar(Player),
     nth1(Move, Board, Colonne),
@@ -33,7 +39,7 @@ compteColonne(Player, [H|T], NumberColonne) :-
     compteColonne(Player, T, Compteur),
     NumberColonne is Compteur+1.
     
-testColonneAligne(X, Y) :- colonneAligne([[1, 1, 1, _], [1, 2, 1, 1], [1, 1, 1, 1], [2, 1, 1, _]], 1, X, Y).
+testColonneAligne(Player, IndiceColonne, Cout) :- colonneAligne([[1, 1, 1, _], [1, 2, 1, 1], [1, 1, 1, 1], [2, 1, 1, _]], Player, IndiceColonne, Cout).
     
 %TODO: faire la definition de ligneAligne, diagonaleGaucheAligne et diagonaleDroiteAligne
 ligneAligne(_, _, 0).
