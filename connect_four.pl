@@ -40,10 +40,17 @@ playMove(Board,IndexColonne,NewBoard,P) :-
 
 
 %Debut du jeu
-init :- length(C1,6), length(C2,6),length(C3,6),
-    length(C4,6),length(C5,6),length(C6,6),length(C7,6),
+init :-
+    length(C1,6),
+    length(C2,6),
+    length(C3,6),
+    length(C4,6),
+    length(C5,6),
+    length(C6,6),
+    length(C7,6),
+    abolish(board/1),
     assert(board([C1,C2,C3,C4,C5,C6,C7])).
 
 % lancer le jeu
-start_game :- play('1').
+start_game :- init(), play('1').
 
