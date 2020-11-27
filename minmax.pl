@@ -11,11 +11,11 @@ possible_move(Board, NextBoard, Player) :-
   nth1(IndexColonne, Board, Colonne),
   not(isColonneFull(Colonne)),
   updateColonne(Colonne, NewColonne, Player),
-  nth1(IndexColonne, NextBoard, NewColonne). 
+  nth1(IndexColonne, NextBoard, NewColonne).
 
 % compare: si val1 > val2 on dit que pos1 est a garder et vice-versa.
-compare(Pos1,Val1,_,Val2,Pos1,Val1) :- Val1 > Val2, !. 
-compare(_,Val1,Pos2,Val2,Pos2,Val2) :- Val2 >= Val1.
+compare(Pos1,Val1,_,Val2,Pos1,Val1) :- Val1 < Val2, !.
+compare(_,Val1,Pos2,Val2,Pos2,Val2) :- Val2 =< Val1.
 
 % usage : find_best_next(current,X,Y) -> X prend la valeur de la meilleure
 %position atteignable depuis current. Y prend la valeur de cette position.
@@ -32,7 +32,7 @@ find_best_next_pos(Current,BestNext,Value,Player) :-
 % alors c'est que current n'a pas de successeur :
 find_best_next_pos(Current,_,Value, Player) :-
   value_of(Current,Player, Value).
-  
+
 % value_of(Board, Player, Value) :-
 value_of(_, _, Value) :-
   Value is random(20).
@@ -45,7 +45,7 @@ value_of(_, _, Value) :-
 % BestVal: la meilleure valeur, aussi remontee
 % Player: soit '1', soit '2'
 
-best_of_list([Board], Board, Value, Player) :- 
+best_of_list([Board], Board, Value, Player) :-
   value_of(Board,Player,Value).
 
 % on determine la valeur, on regarde la prochaine, on compare
