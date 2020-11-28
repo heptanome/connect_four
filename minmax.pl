@@ -1,6 +1,7 @@
 :- module(minmax, [find_best_next_pos/4]).
 
 :- use_module(utilities, [isColumnFull/1, updateColumn/3]).
+:- use_module(firstHeuristic, [heuristic/3]).
 
 % Usage : Passer le board actuel dans Board, il renverra un NextBoard possible
 %         dans la variable NextBoard. Si IndexColonne n'est pas specifie, il renverra
@@ -34,9 +35,8 @@ find_best_next_pos(Current,BestNext,Value,Player) :-
 find_best_next_pos(Current,_,Value, Player) :-
   value_of(Current,Player, Value).
 
-% value_of(Board, Player, Value) :-
-value_of(_, _, Value) :-
-  Value is random(20).
+value_of(Board, Player, Cost) :-
+    heuristic(Board, Player, Cost).
 
 
 % best_of_list: d'apres la liste de tous les prochains coups possibles,
