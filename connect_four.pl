@@ -24,7 +24,7 @@ changePlayer('2','1').
 ia(Board, BestNext, Value, Player) :- find_best_next_pos(Board, BestNext, Value, Player).
 
 readColonne(X) :-
-    write('Quelle colonne voulez-vous jouer (1 à 7)?'),
+    writeln('Quelle colonne voulez-vous jouer (1 à 7)?'),
     read(X),
     nth1(Index, [1,2,3,4,5,6,7], X),
     not(isColonneFull(Index)).

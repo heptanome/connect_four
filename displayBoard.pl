@@ -5,7 +5,8 @@ displayBoard(B) :-
     writeln('*------------*'),
     printLigne(6,B), printLigne(5,B), printLigne(4,B),
     printLigne(3,B), printLigne(2,B), printLigne(1,B),
-    writeln('*------------*').
+    writeln('*------------*'),
+    writeln('').
 
 %Affichage d une ligne
 printLigne(L, B) :-
