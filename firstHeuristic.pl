@@ -1,32 +1,39 @@
 %:- module(firstHeuristic, [firstHeuristic/1]).
 
-%heuristic(+Board, +Player, -Cout) :
-% - Board  : état du plateau après avoir joué le coup
-% - Player : numéro du joueur actuel
-% - Cout   : cout de la dispostion du plateau
+% Usage : Obtenir le coût de la dispotion actuelle du plateau en
+%         cherchant le nombre maximum de jetons alignés du joueur actuel sur le plateau.
+%         Ces jetons peuvent être aligné sur une ligne, une colonne ou une diagonale.
+% heuristic(+Board, +Player, -FinalCost) :
+% - Board     : état du plateau après avoir joué le coup
+% - Player    : numéro du joueur actuel
+% - FinalCost : cout de la dispostion du plateau
 heuristic(Board, Player, FinalCost) :-
     nonvar(Player),
     getColumnCostList(Board, Player, CostsListColumn),
     max_list(CostsListColumn, MaxCostColumn),
     getRowCostList(Board, Player, CostsListRow),
     max_list(CostsListRow, MaxCostRow),
-    getRightDiagsCostList(Board, Player, CostsListRightDiags),
-    max_list(CostsListRightDiags, MaxCostRightDiags),
-    getLeftDiagsCostList(Board, Player, CostsListLeftDiags),
-    max_list(CostsListLeftDiags, MaxCostLeftDiags),
-    FinalCost is 4-max(MaxCostColumn, max(MaxCostRow, max(MaxCostRightDiags, MaxCostLeftDiags))).
+    getDescendingDiagsCostList(Board, Player, CostsListDescDiags),
+    max_list(CostsListDescDiags, MaxCostDescDiags),
+    getAscendingDiagsCostList(Board, Player, CostsListAscDiags),
+    max_list(CostsListAscDiags, MaxCostAscDiags),
+    FinalCost is 4-max(MaxCostColumn, max(MaxCostRow, max(MaxCostDescDiags, MaxCostAscDiags))).
 
-%getColumnCostList(+Board, +Player, -List) :
+% Usage : Obtenir le nombre de jetons consécutifs alignés du joueur actuel sur chaque colonne du plateau
+%         On ne compte que les jetons du joueur qui sont au dessus du plus haut jeton du joueur opposé
+% getColumnCostList(+Board, +Player, -List) :
 % - Board  : état du plateau après avoir joué le coup
 % - Player : numéro du joueur actuel
-% - List   : liste des sommes de jetons alignés d un joueur pour chaque colonne du plateau
+% - List   : liste des sommes de jetons alignés du joueur pour chaque colonne du plateau
 getColumnCostList([], _, []).
 getColumnCostList([ActualColonne|Rest], Player, [Cost|List]) :-
     reverse(ActualColonne, ReversedColonne),
     sumColumn(Player, ReversedColonne, Cost),
     getColumnCostList(Rest, Player, List).
 
-%sumColumn(+Player, +Column, -Sum) :
+% Usage : Compter le nombre de jetons consécutifs alignés du joueur actuel sur une colonne
+%         On ne compte que les jetons du joueur qui sont au dessus du plus haut jeton du joueur opposé
+% sumColumn(+Player, +Column, -Sum) :
 % - Player : numéro du joueur actuel
 % - Column : colonne sur laquelle on calcule le nombre de jetons alignés
 % - Sum    : nombre de jetons alignés du joueur.
@@ -42,10 +49,11 @@ sumColumn(Player, [H|T], AlignedTokens) :-
     sumColumn(Player, T, Sum),
     AlignedTokens is Sum+1.
 
-%getRowCostList(+Board, +Player, -List) :
+% Usage : Obtenir le nombre de jetons consécutifs alignés du joueur actuel sur chaque ligne du plateau
+% getRowCostList(+Board, +Player, -List) :
 % - Board  : état du plateau après avoir joué le coup
 % - Player : numéro du joueur actuel
-% - List   : liste des sommes de jetons alignés d un joueur pour chaque ligne du plateau
+% - List   : liste des sommes de jetons alignés du joueur pour chaque ligne du plateau
 getRowCostList([[],[],[],[],[],[],[]],_,[]).
 getRowCostList([[H1|R1], [H2|R2], [H3|R3], [H4|R4], [H5|R5], [H6|R6], [H7|R7]], Player, [MaxCostRow|List]) :-
     CurrentLigne = [H1, H2, H3, H4, H5, H6, H7],
@@ -53,11 +61,12 @@ getRowCostList([[H1|R1], [H2|R2], [H3|R3], [H4|R4], [H5|R5], [H6|R6], [H7|R7]], 
     max_list([LastSum|ListCost], MaxCostRow),
     getRowCostList([R1,R2,R3,R4,R5,R6,R7], Player,List).
 
-%sumRow(+Player, +Row, -Sum, -ListSum) :
+% Usage : Compter le nombre de jetons consécutifs alignés du joueur actuel sur une ligne
+% sumRow(+Player, +Row, -Sum, -ListSum) :
 % - Player  : numéro du joueur actuel
 % - Row     : ligne sur laquelle on calcule le nombre de jetons alignés
 % - Sum     : nombre de jetons alignés du joueur en début de ligne
-% - ListSum : liste des sommes des jetons consécutifs du joueur sur une ligne
+% - ListSum : liste des sommes des jetons consécutifs du joueur sur une ligne hors début de ligne
 sumRow(_, [], 0, []).
 sumRow(Player, [H|T], Sum, [NewSum|ListSum]) :-
     (var(H) ; H \= Player),
@@ -69,13 +78,29 @@ sumRow(Player, [H|T], Sum, ListSum) :-
     sumRow(Player, T, NewSum, ListSum),
     Sum is NewSum+1.
 
-getLeftDiagsCostList(Board, Player, ListSum) :-
+% Usage : Obtenir le nombre de jetons consécutifs alignés du joueur actuel 
+%         sur les diagonales ascendantes numéro 4 à 9. 
+%         On ne prend pas en compte les diagonales 1, 2, 3, 10, 11 et 12,
+%         car on ne peut aligner 4 jetons desssus.
+% getAscendingDiagsCostList(+Board, +Player, -List):
+% - Board  : état du plateau après avoir joué le coup
+% - Player : numéro du joueur actuel
+% - List   : liste des sommes de jetons consécutifs du joueur pour les diagonales ascendantes 4 à 9
+getAscendingDiagsCostList(Board, Player, List) :-
     reverse(Board, ReversedBoard),
-    getRightDiagsCostList(ReversedBoard, Player, ListSum).
+    getDescendingDiagsCostList(ReversedBoard, Player, List).
 
-getRightDiagsCostList(Board, Player, ListSum) :-
-    getEveryRightDiags(Board, CompleteListDiags),
-    sumDiag(Player, CompleteListDiags, ListSum).
+% Usage : Obtenir le nombre de jetons consécutifs alignés du joueur actuel 
+%         sur les diagonales descendantes numéro 4 à 9. 
+%         On ne prend pas en compte les diagonales 1, 2, 3, 10, 11 et 12,
+%         car on ne peut aligner 4 jetons desssus.
+% getDescendingDiagsCostList(+Board, +Player, -List):
+% - Board  : état du plateau après avoir joué le coup
+% - Player : numéro du joueur actuel
+% - List   : liste des sommes de jetons consécutifs du joueur pour les diagonales descendantes N°4 à 9
+getDescendingDiagsCostList(Board, Player, List) :-
+    getEveryDescDiags(Board, CompleteListDiags),
+    sumDiag(Player, CompleteListDiags, List).
 
 sumDiag(_, [], []).
 sumDiag(Player, [Diag|Rest], [MaxCostDiag|ListSum]) :-
@@ -83,22 +108,21 @@ sumDiag(Player, [Diag|Rest], [MaxCostDiag|ListSum]) :-
     max_list([LastSum|ListCost], MaxCostDiag),
     sumDiag(Player, Rest, ListSum).
 
-%Crée une liste des 6 diagonales droites centrées au milieu du plateau.
-%Elles correspondent aux seules diagonales à droite où 4 jetons peuvent être alignés.
-%getEveryRightDiags(+Board, -CompleteListDiags)
+% Usage : Créer une liste des diagonales descendantes N°4 à 9.
+% getEveryDescDiags(+Board, -CompleteListDiags)
 % - Board             : état du plateau après avoir joué le coup
-% - CompleteListDiags : Liste de toutes les diagonales droites du plateau
-getEveryRightDiags(Board, CompleteListDiags) :-
-    getEveryDiagsHalfBoard(Board, 4, ListDiags1),
+% - CompleteListDiags : liste de toutes les diagonales descendantes du plateau
+getEveryDescDiags(Board, CompleteListDiags) :-
+    getEveryDescDiagsHalfBoard(Board, 4, ListDiags1),
     reverse(Board, ReversedBoard),
     reverseEveryColumns(ReversedBoard, ReversedColumnsBoard),
-    getEveryDiagsHalfBoard(ReversedColumnsBoard, 4, ListDiags2),
+    getEveryDescDiagsHalfBoard(ReversedColumnsBoard, 4, ListDiags2),
     reverse(ListDiags2, ReversedListDiags2),
     reverseEveryColumns(ReversedListDiags2, ReversedColumnsListDiags2),
     append(ListDiags1, ReversedColumnsListDiags2, CompleteListDiags).
 
-%Renverse toutes les colonnes du plateau.
-%reverseEveryColumns(+Board, -ReversedBoard)
+% Usage : Inverser toutes les colonnes du plateau.
+% reverseEveryColumns(+Board, -ReversedBoard)
 % - Board         : état du plateau après avoir joué le coup
 % - ReversedBoard : nouveau plateau avec des colonnes inversées par rapport à Board 
 reverseEveryColumns([], []).
@@ -106,34 +130,34 @@ reverseEveryColumns([Column|Rest], [ReversedColumn|ReversedRest]) :-
     reverse(Column, ReversedColumn),
     reverseEveryColumns(Rest, ReversedRest).
 
-%Crée une liste de diagonales de la moitié du plateau Board.
-%Les numéros de ces diagonales sont compris entre Rank et 6.
-%Rank est un entier entre 1 et 6 inclus.
-%getEveryDiagsHalfBoard(+Board, +Rank, -ListDiags)
+% Usage : Créer une liste de diagonales de la moitié du plateau Board.
+%         Les numéros de ces diagonales sont compris entre Rank et 6.
+%         Rank est un entier entre 1 et 6 inclus.
+% getEveryDescDiagsHalfBoard(+Board, +Rank, -ListDiags)
 % - Board     : état du plateau après avoir joué le coup
 % - Rank      : rang à partir duquel on veut les diagonales
-% - ListDiags : listes des diagonales de rang Rank au rang 6
-getEveryDiagsHalfBoard(_, 7, []).
-getEveryDiagsHalfBoard(Board, Rank, [Diag|Rest]) :-
-    createOneRightDiag(Board, Rank, 1, Rank, Diag),
+% - ListDiags : listes des diagonales de numéro Rank au numéro 6
+getEveryDescDiagsHalfBoard(_, 7, []).
+getEveryDescDiagsHalfBoard(Board, Rank, [Diag|Rest]) :-
+    createOneDescDiag(Board, Rank, 1, Rank, Diag),
     NextRank is Rank + 1,
-    getEveryDiagsHalfBoard(Board, NextRank, Rest).
+    getEveryDescDiagsHalfBoard(Board, NextRank, Rest).
 
-%Crée une liste Diag représentant une diagonale de rang Rank du plateau Board
-%createOneRightDiag(+Board, +Rank, 1, +Rank, -Diag)
+% Usage : Créer une liste représentant une diagonale de numéro Rank
+% createOneDescDiag(+Board, +Rank, 1, +Rank, -Diag)
 % - Board       : état du plateau après avoir joué le coup
 % - Rank        : rang de la diagonale créée (Entier entre 1 et 6 inclus)
 % - IndexColumn : index de la colonne du jeton à mettre dans la diagonale (initialisé à 1 au premier appel)
 % - IndexToken  : index du jeton dans sa colonne (initialisé à Rank au premier appel)
 % - Diag        : diagonale créée
-createOneRightDiag(_, Rank, IndexColumn, 0, []) :-
+createOneDescDiag(_, Rank, IndexColumn, 0, []) :-
 	IndexColumn is Rank + 1,!.
-createOneRightDiag(Board, Rank, IndexColumn, IndexToken, [Token|Rest]) :-
+createOneDescDiag(Board, Rank, IndexColumn, IndexToken, [Token|Rest]) :-
     nth1(IndexColumn, Board, Column),
     nth1(IndexToken, Column, Token),
     NewIndexColumn is IndexColumn+1,
     NewIndexToken is IndexToken-1,
-    createOneRightDiag(Board, Rank, NewIndexColumn, NewIndexToken, Rest).
+    createOneDescDiag(Board, Rank, NewIndexColumn, NewIndexToken, Rest).
 	
     
 %%% TESTS %%%
@@ -147,15 +171,15 @@ testGetColumnCostList(Player, List) :- board(Board), getColumnCostList(Board, Pl
 testGetRowCostList(Player, Sum) :- board(Board), getRowCostList(Board, Player, Sum).
 
 %%% CREATION DE TOUTES LES DIAGONALES INTERESSANTES
-testCreateDiag(Rank, Diag) :- board(Board), createOneRightDiag(Board, Rank, 1, Rank, Diag).
-testGetEveryDiagsHalfBoard(Start, ListDiags) :- board(Board), getEveryDiagsHalfBoard(Board, Start, ListDiags).
-testGetEveryRightDiags(ListDiags) :- board(Board), getEveryRightDiags(Board, ListDiags).
+testCreateDiag(Rank, Diag) :- board(Board), createOneDescDiag(Board, Rank, 1, Rank, Diag).
+testGetEveryDescDiagsHalfBoard(Start, ListDiags) :- board(Board), getEveryDescDiagsHalfBoard(Board, Start, ListDiags).
+testGetEveryDescDiags(ListDiags) :- board(Board), getEveryDescDiags(Board, ListDiags).
 testReverseBoard(ReversedColumnsBoard) :- board(Board), reverse(Board, ReversedBoard), reverseEveryColumns(ReversedBoard, ReversedColumnsBoard).
 
 %%% SOMMES DES JETONS SUR LES DIAGONALES
-testSumDiag(Player, Result) :- board(Board), getEveryRightDiags(Board, CompleteListDiags), sumDiag(Player, CompleteListDiags, Result).
-testGetRightDiagsCostList(Player, Sum) :- board(Board), getRightDiagsCostList(Board, Player, Sum).
-testGetLeftDiagsCostList(Player, Sum) :- board(Board), getLeftDiagsCostList(Board, Player, Sum).
+testSumDiag(Player, Result) :- board(Board), getEveryDescDiags(Board, CompleteListDiags), sumDiag(Player, CompleteListDiags, Result).
+testGetDescDiagsCostList(Player, Sum) :- board(Board), getDescendingDiagsCostList(Board, Player, Sum).
+testGetAscDiagsCostList(Player, Sum) :- board(Board), getAscendingDiagsCostList(Board, Player, Sum).
 
 %%% HEURISTIC
 testHeuristic(Player, Cost) :- board(Board), heuristic(Board, Player, Cost).
