@@ -1,4 +1,4 @@
-%:- module(firstHeuristic, [firstHeuristic/1]).
+%:- module(firstHeuristic, [heuristic/1]).
 
 % Usage : Obtenir le coût de la dispotion actuelle du plateau en
 %         cherchant le nombre maximum de jetons alignés du joueur actuel sur le plateau.

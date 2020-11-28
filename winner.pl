@@ -1,69 +1,79 @@
 :- module(winner, [winner/2]).
 
+% Usage : Vérifier si il y a un gagnant.
+%         On vérifie si une position gagnante est atteinte sur :
+%         - une colonne
+%         - une ligne
+%         - une diagonale ascendante
+%         - une diagonale descendate.
 winner(Board,Winner) :-
-    winnerToutesColonnes(Board,Winner),!.
+    winnerWithAColumn(Board,Winner),!.
 winner(Board,Winner) :-
-    winnerToutesLignes(Board,Winner),!.
+    winnerWithARow(Board,Winner),!.
 winner(Board,Winner) :-
-    winnerDiagonaleGauche(Board,Winner),!.
+    winnerWithADescendingDiag(Board,Winner),!.
 winner(Board,Winner) :-
-    winnerDiagonaleDroite(Board,Winner),!.
+    winnerWithAnAscendingDiag(Board,Winner),!.
 
-winnerColonne([P,Q,R,S,_,_], P) :-
+% Usage : Itérer sur les colonnes pour vérifier si une des colonnes est gagnante.
+winnerWithAColumn([Column|_],Winner) :-
+    winingColumn(Column,Winner),!.
+winnerWithAColumn([_|NextColumns],Winner) :-
+    winnerWithAColumn(NextColumns,Winner).
+    
+% Usage : Définir les positions gagnantes pour une colonne.
+winingColumn([P,Q,R,S,_,_], P) :-
     P==Q, Q==R, R==S, nonvar(P).
-winnerColonne([_,P,Q,R,S,_], P) :-
+winingColumn([_,P,Q,R,S,_], P) :-
     P==Q, Q==R, R==S, nonvar(P).
-winnerColonne([_,_,P,Q,R,S], P) :-
+winingColumn([_,_,P,Q,R,S], P) :-
     P==Q, Q==R, R==S,  nonvar(P).
 
-%Iteration sur les colonnes pour verifier si une des colonnes est gagnante
-winnerToutesColonnes([X|_],Winner) :-
-    winnerColonne(X,Winner),!.
-winnerToutesColonnes([_|C],Winner) :-
-    winnerToutesColonnes(C,Winner).
+% Usage : Itérer sur les lignes pour vérifier si une des lignes est gagnante.
+winnerWithARow([[A|_], [B|_], [C|_], [D|_], [E|_], [F|_], [G|_]], Winner) :-
+    winningRow([A,B,C,D,E,F,G], Winner) ,!.
+winnerWithARow([[_|Q1], [_|Q2], [_|Q3], [_|Q4], [_|Q5], [_|Q6], [_|Q7]], Winner) :-
+    winnerWithARow([Q1,Q2,Q3,Q4,Q5,Q6,Q7], Winner) .
 
-winnerLigne([P,Q,R,S,_,_,_], P) :-
+% Usage : Définir les positions gagnantes pour une ligne.
+winningRow([P,Q,R,S,_,_,_], P) :-
     P==Q, Q==R, R==S,  nonvar(P).
-winnerLigne([_,P,Q,R,S,_,_], P) :-
+winningRow([_,P,Q,R,S,_,_], P) :-
     P==Q, Q==R, R==S,  nonvar(P).
-winnerLigne([_,_,P,Q,R,S,_], P) :-
+winningRow([_,_,P,Q,R,S,_], P) :-
     P==Q, Q==R, R==S,  nonvar(P).
-winnerLigne([_,_,_,P,Q,R,S], P) :-
-    P==Q, Q==R, R==S,  nonvar(P).
-
-%Iteration sur les lignes
-winnerToutesLignes([[A|_], [B|_], [C|_], [D|_], [E|_], [F|_], [G|_]], Winner) :-
-    winnerLigne([A,B,C,D,E,F,G], Winner) ,!.
-winnerToutesLignes([[_|Q1], [_|Q2], [_|Q3], [_|Q4], [_|Q5], [_|Q6], [_|Q7]], Winner) :-
-    winnerToutesLignes([Q1,Q2,Q3,Q4,Q5,Q6,Q7], Winner) .
-
-winnerDiagonaleGauche([[P,_,_,_,_,_], [_,Q,_,_,_,_], [_,_,R,_,_,_], [_,_,_,S,_,_],_,_,_], P) :-
-    P==Q, Q==R, R==S, nonvar(P).
-winnerDiagonaleGauche([[_,P,_,_,_,_], [_,_,Q,_,_,_], [_,_,_,R,_,_], [_,_,_,_,S,_],_,_,_], P) :-
-    P==Q, Q==R, R==S, nonvar(P).
-winnerDiagonaleGauche([[_,_,P,_,_,_], [_,_,_,Q,_,_], [_,_,_,_,R,_], [_,_,_,_,_,S],_,_,_], P) :-
+winningRow([_,_,_,P,Q,R,S], P) :-
     P==Q, Q==R, R==S,  nonvar(P).
 
-winnerDiagonaleGauche([_, [P,_,_,_,_,_], [_,Q,_,_,_,_], [_,_,R,_,_,_], [_,_,_,S,_,_],_,_], P) :-
+% Usage : Définir les positions gagnantes pour une diagonale descendante.
+winnerWithADescendingDiag([[P,_,_,_,_,_], [_,Q,_,_,_,_], [_,_,R,_,_,_], [_,_,_,S,_,_],_,_,_], P) :-
     P==Q, Q==R, R==S, nonvar(P).
-winnerDiagonaleGauche([_, [_,P,_,_,_,_], [_,_,Q,_,_,_], [_,_,_,R,_,_], [_,_,_,_,S,_],_,_], P) :-
+winnerWithADescendingDiag([[_,P,_,_,_,_], [_,_,Q,_,_,_], [_,_,_,R,_,_], [_,_,_,_,S,_],_,_,_], P) :-
     P==Q, Q==R, R==S, nonvar(P).
-winnerDiagonaleGauche([_, [_,_,P,_,_,_], [_,_,_,Q,_,_], [_,_,_,_,R,_], [_,_,_,_,_,S],_,_], P) :-
+winnerWithADescendingDiag([[_,_,P,_,_,_], [_,_,_,Q,_,_], [_,_,_,_,R,_], [_,_,_,_,_,S],_,_,_], P) :-
     P==Q, Q==R, R==S,  nonvar(P).
 
-winnerDiagonaleGauche([_,_, [P,_,_,_,_,_], [_,Q,_,_,_,_], [_,_,R,_,_,_], [_,_,_,S,_,_],_], P) :-
+winnerWithADescendingDiag([_, [P,_,_,_,_,_], [_,Q,_,_,_,_], [_,_,R,_,_,_], [_,_,_,S,_,_],_,_], P) :-
     P==Q, Q==R, R==S, nonvar(P).
-winnerDiagonaleGauche([_,_, [_,P,_,_,_,_], [_,_,Q,_,_,_], [_,_,_,R,_,_], [_,_,_,_,S,_],_], P) :-
+winnerWithADescendingDiag([_, [_,P,_,_,_,_], [_,_,Q,_,_,_], [_,_,_,R,_,_], [_,_,_,_,S,_],_,_], P) :-
     P==Q, Q==R, R==S, nonvar(P).
-winnerDiagonaleGauche([_,_, [_,_,P,_,_,_], [_,_,_,Q,_,_], [_,_,_,_,R,_], [_,_,_,_,_,S],_], P) :-
+winnerWithADescendingDiag([_, [_,_,P,_,_,_], [_,_,_,Q,_,_], [_,_,_,_,R,_], [_,_,_,_,_,S],_,_], P) :-
+    P==Q, Q==R, R==S,  nonvar(P).
+
+winnerWithADescendingDiag([_,_, [P,_,_,_,_,_], [_,Q,_,_,_,_], [_,_,R,_,_,_], [_,_,_,S,_,_],_], P) :-
+    P==Q, Q==R, R==S, nonvar(P).
+winnerWithADescendingDiag([_,_, [_,P,_,_,_,_], [_,_,Q,_,_,_], [_,_,_,R,_,_], [_,_,_,_,S,_],_], P) :-
+    P==Q, Q==R, R==S, nonvar(P).
+winnerWithADescendingDiag([_,_, [_,_,P,_,_,_], [_,_,_,Q,_,_], [_,_,_,_,R,_], [_,_,_,_,_,S],_], P) :-
     P==Q, Q==R, R==S, nonvar(P).
 
-winnerDiagonaleGauche([_,_,_, [P,_,_,_,_,_], [_,Q,_,_,_,_], [_,_,R,_,_,_], [_,_,_,S,_,_]], P) :-
+winnerWithADescendingDiag([_,_,_, [P,_,_,_,_,_], [_,Q,_,_,_,_], [_,_,R,_,_,_], [_,_,_,S,_,_]], P) :-
     P==Q, Q==R, R==S, nonvar(P).
-winnerDiagonaleGauche([_,_,_,[_,P,_,_,_,_], [_,_,Q,_,_,_], [_,_,_,R,_,_], [_,_,_,_,S,_]], P) :-
+winnerWithADescendingDiag([_,_,_,[_,P,_,_,_,_], [_,_,Q,_,_,_], [_,_,_,R,_,_], [_,_,_,_,S,_]], P) :-
     P==Q, Q==R, R==S, nonvar(P).
-winnerDiagonaleGauche([_,_,_,[_,_,P,_,_,_], [_,_,_,Q,_,_], [_,_,_,_,R,_], [_,_,_,_,_,S]], P) :-
+winnerWithADescendingDiag([_,_,_,[_,_,P,_,_,_], [_,_,_,Q,_,_], [_,_,_,_,R,_], [_,_,_,_,_,S]], P) :-
     P==Q, Q==R, R==S, nonvar(P).
 
-winnerDiagonaleDroite(Board,Winner) :-
-    reverse(Board, BoardInverse), winnerDiagonaleGauche(BoardInverse, Winner).
+% Usage : Définir les positions gagnantes pour une diagonale ascendante.
+winnerWithAnAscendingDiag(Board,Winner) :-
+    reverse(Board, InversedBoard), winnerWithADescendingDiag(InversedBoard, Winner).
