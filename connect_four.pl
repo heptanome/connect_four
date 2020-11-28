@@ -2,7 +2,7 @@
 
 :- use_module(displayBoard, [displayBoard/1]).
 :- use_module(winner, [winner/2]).
-:- use_module(minmax, [find_best_next_pos/4]).
+:- use_module(minmax, [find_best_next_pos/5]).
 :- use_module(utilities, [isColonneFull/1, updateColonne/3]).
 
 %Regarder si le jeu est fini
@@ -21,7 +21,7 @@ changePlayer('2','1').
 
 %IA ernvoie colonne complete
 % ia(Board, IndexColonne,_) :- repeat, I is random(7), IndexColonne is I+1,  nth1(IndexColonne, Board, Elem), not(isColonneFull(Elem)), write('Chose column '),writeln(IndexColonne), !.
-ia(Board, BestNext, Value, Player) :- find_best_next_pos(Board, BestNext, Value, Player).
+ia(Board, BestNext, Value, Player, Heur) :- find_best_next_pos(Board, BestNext, Value, Player, Heur).
 
 readColonne(X) :-
     writeln('Quelle colonne voulez-vous jouer (1 à 7)?'),
@@ -51,7 +51,7 @@ play(Player, Heur1, Heur2) :-
     write('New turn for:'),
     writeln(Player), board(Board),
     displayBoard(Board),
-    ia(Board, NewBoard, _, Player),
+    ia(Board, NewBoard, _, Player, Heur1),
     applyIt(Board, NewBoard),
     changePlayer(Player,NextPlayer),
     play(NextPlayer, Heur1, Heur2), !.
@@ -62,7 +62,7 @@ play(Player, Heur1, Heur2) :-
     writeln(Player),
     board(Board),
     displayBoard(Board),
-    ia(Board, NewBoard, _, Player),
+    ia(Board, NewBoard, _, Player, Heur2),
     applyIt(Board, NewBoard),
     changePlayer(Player,NextPlayer),
     play(NextPlayer, Heur1, Heur2).

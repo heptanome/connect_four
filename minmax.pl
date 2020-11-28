@@ -1,6 +1,7 @@
-:- module(minmax, [find_best_next_pos/4]).
+:- module(minmax, [find_best_next_pos/5]).
 
 :- use_module(utilities, [isColonneFull/1, updateColonne/3]).
+:- use_module(firstHeuristic, [heuristic/3]). 
 
 % usage: passer le board actuel dans Board, il renverra un NextBoard possible
 % dans la variable NextBoard. Si IndexColonne n'est pas specifie, il renverra
@@ -22,21 +23,24 @@ compare(_,Val1,Pos2,Val2,Pos2,Val2) :- Val2 =< Val1.
 % current: currentBoard
 % bestNext: le meilleur des tableaux qu'on va trouver
 % value: valeur non écrit mais renvoyée
-find_best_next_pos(Current,BestNext,Value,Player) :-
+% heur l'heuristique à utiliser
+find_best_next_pos(Current,BestNext,Value,Player,Heur) :-
   findall(NextPos, possible_move(Current,NextPos,Player),ListNextPos),
   ListNextPos \== [],
-  best_of_list(ListNextPos, BestNext, Value, Player),!.
+  best_of_list(ListNextPos, BestNext, Value, Player, Heur),!.
   % on s arrete dès qu'on a un meilleur element
 
 % si possible_move(current,nextPos) ne revoie aucune valeur pour nextPos,
 % alors c'est que current n'a pas de successeur :
-find_best_next_pos(Current,_,Value, Player) :-
-  value_of(Current,Player, Value).
+find_best_next_pos(Current,_,Value, Player, Heur) :-
+  value_of(Current,Player, Value,Heur).
 
-% value_of(Board, Player, Value) :-
-value_of(_, _, Value) :-
-  Value is random(20).
+% Utilise l'heuristique pour calculer la valeur du coup (par default calcule juste une valeur random)
+value_of(Board, Player, Value, 'first_heur') :-
+  heuristic(Board, Player, Value), !.
 
+value_of(_, _, Value,_) :-
+  Value is random(20), !.
 
 % best_of_list: d'apres la liste de tous les prochains coups possibles,
 % recuperation du meilleur coup a jouer en fonction de l'heuristique (TODO).
@@ -44,13 +48,14 @@ value_of(_, _, Value) :-
 % BestBoard: Le meilleur coup a jouer (remonte par la fonction)
 % BestVal: la meilleure valeur, aussi remontee
 % Player: soit '1', soit '2'
+% Heur : l'heuristique à utiliser
 
-best_of_list([Board], Board, Value, Player) :-
-  value_of(Board,Player,Value).
+best_of_list([Board], Board, Value, Player, Heur) :-
+  value_of(Board,Player,Value, Heur).
 
 % on determine la valeur, on regarde la prochaine, on compare
-best_of_list([Board1 | EndList],BestBoard, BestVal, Player) :-
-  value_of(Board1, Player, Val1),
-  best_of_list(EndList,Board2,Val2, Player),
+best_of_list([Board1 | EndList],BestBoard, BestVal, Player, Heur) :-
+  value_of(Board1, Player, Val1, Heur),
+  best_of_list(EndList,Board2,Val2, Player, Heur),
   compare(Board1,Val1,Board2,Val2,BestBoard,BestVal).
 

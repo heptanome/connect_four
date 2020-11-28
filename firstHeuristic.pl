@@ -1,4 +1,4 @@
-%:- module(firstHeuristic, [firstHeuristic/1]).
+:- module(firstHeuristic, [heuristic/3]).
 
 %heuristic(+Board, +Player, -Cout) :
 % - Board  : état du plateau après avoir joué le coup
