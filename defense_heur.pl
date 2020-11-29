@@ -1,7 +1,7 @@
 :- module(defense_heur, [heuristic_def/3]).
 
 % Usage : Obtenir le coût de la dispotion actuelle du plateau en
-%         cherchant le nombre maximum de jetons alignés du joueur actuel sur le plateau.
+%         cherchant le nombre maximum de jetons alignés du joueur adverse sur le plateau.
 %         Ces jetons peuvent être aligné sur une ligne, une colonne ou une diagonale.
 % heuristic(+Board, +Player, -FinalCost) :
 % - Board     : état du plateau après avoir joué le coup
@@ -17,10 +17,10 @@ heuristic_def(Board, Player, FinalCost) :-
     max_list(CostsListDescDiags, MaxCostDescDiags),
     getAscendingDiagsCostList(Board, Player, CostsListAscDiags),
     max_list(CostsListAscDiags, MaxCostAscDiags),
-    FinalCost is 4-max(MaxCostColumn, max(MaxCostRow, max(MaxCostDescDiags, MaxCostAscDiags))).
+    FinalCost is max(MaxCostColumn, max(MaxCostRow, max(MaxCostDescDiags, MaxCostAscDiags))).
 
-% Usage : Obtenir le nombre de jetons consécutifs alignés du joueur actuel sur chaque colonne du plateau
-%         On ne compte que les jetons du joueur qui sont au dessus du plus haut jeton du joueur opposé
+% Usage : Obtenir le nombre de jetons consécutifs alignés du joueur adverse sur chaque colonne du plateau
+%         On ne compte que les jetons du joueur qui sont au dessus du plus haut jeton du joueur actuel
 % getColumnCostList(+Board, +Player, -List) :
 % - Board  : état du plateau après avoir joué le coup
 % - Player : numéro du joueur actuel
@@ -31,8 +31,8 @@ getColumnCostList([ActualColonne|Rest], Player, [Cost|List]) :-
     sumColumn(Player, ReversedColonne, Cost),
     getColumnCostList(Rest, Player, List).
 
-% Usage : Compter le nombre de jetons consécutifs alignés du joueur actuel sur une colonne
-%         On ne compte que les jetons du joueur qui sont au dessus du plus haut jeton du joueur opposé
+% Usage : Compter le nombre de jetons consécutifs alignés du joueur adverse sur une colonne
+%         On ne compte que les jetons du joueur qui sont au dessus du plus haut jeton du joueur actuel
 % sumColumn(+Player, +Column, -Sum) :
 % - Player : numéro du joueur actuel
 % - Column : colonne sur laquelle on calcule le nombre de jetons alignés
@@ -50,7 +50,7 @@ sumColumn(Player, [H|T], AlignedTokens) :-
     sumColumn(Player, T, Sum),
     AlignedTokens is Sum+1.
 
-% Usage : Obtenir le nombre de jetons consécutifs alignés du joueur actuel sur chaque ligne du plateau
+% Usage : Obtenir le nombre de jetons consécutifs alignés du joueur adverse sur chaque ligne du plateau
 % getRowCostList(+Board, +Player, -List) :
 % - Board  : état du plateau après avoir joué le coup
 % - Player : numéro du joueur actuel
@@ -62,7 +62,7 @@ getRowCostList([[H1|R1], [H2|R2], [H3|R3], [H4|R4], [H5|R5], [H6|R6], [H7|R7]], 
     max_list([LastSum|ListCost], MaxCostRow),
     getRowCostList([R1,R2,R3,R4,R5,R6,R7], Player,List).
 
-% Usage : Compter le nombre de jetons consécutifs alignés du joueur actuel sur une ligne
+% Usage : Compter le nombre de jetons consécutifs alignés du joueur adverse sur une ligne
 % sumRow(+Player, +Row, -Sum, -ListSum) :
 % - Player  : numéro du joueur actuel
 % - Row     : ligne sur laquelle on calcule le nombre de jetons alignés
@@ -79,7 +79,7 @@ sumRow(Player, [H|T], Sum, ListSum) :-
     sumRow(Player, T, NewSum, ListSum),
     Sum is NewSum+1.
 
-% Usage : Obtenir le nombre de jetons consécutifs alignés du joueur actuel
+% Usage : Obtenir le nombre de jetons consécutifs alignés du joueur adverse
 %         sur les diagonales ascendantes numéro 4 à 9.
 %         On ne prend pas en compte les diagonales 1, 2, 3, 10, 11 et 12,
 %         car on ne peut aligner 4 jetons desssus.
@@ -91,7 +91,7 @@ getAscendingDiagsCostList(Board, Player, List) :-
     reverse(Board, ReversedBoard),
     getDescendingDiagsCostList(ReversedBoard, Player, List).
 
-% Usage : Obtenir le nombre de jetons consécutifs alignés du joueur actuel
+% Usage : Obtenir le nombre de jetons consécutifs alignés du joueur adverse
 %         sur les diagonales descendantes numéro 4 à 9.
 %         On ne prend pas en compte les diagonales 1, 2, 3, 10, 11 et 12,
 %         car on ne peut aligner 4 jetons desssus.
@@ -163,6 +163,8 @@ createOneDescDiag(Board, Rank, IndexColumn, IndexToken, [Token|Rest]) :-
 
 %%% TESTS %%%
 board([['1', '1', '1', '2', '1', _], ['1', '2', '1', _, _, _], ['1', '2', '2', '2', _, _], ['2', '1', '1', '1', '2', '2'], ['2', '1', '2', '1', '2', _], ['2', '2', '2', '1', '1', _], ['1', _, _, _, _, _]]).
+board2([['1', '2', _, _, _, _], ['1', _, _, _, _, _], [_, _, _, _, _, _], [_, _, _, _, _, _], [_, _, _,_, _, _], ['2', _, _, _, _, _], [_, _, _, _, _, _]]).
+
 
 %%% SOMMES DES JETONS SUR LES COLONNES
 testSumRow(Player, Sum, ListSum) :- sumRow(Player, [1, 2, 1, _, 1, 2, 1, 2, 1, 1, 2], Sum, ListSum).
@@ -171,14 +173,7 @@ testGetColumnCostList(Player, List) :- board(Board), getColumnCostList(Board, Pl
 %%% SOMMES DES JETONS SUR LES LIGNES
 testGetRowCostList(Player, Sum) :- board(Board), getRowCostList(Board, Player, Sum).
 
-%%% CREATION DE TOUTES LES DIAGONALES INTERESSANTES
-testCreateDiag(Rank, Diag) :- board(Board), createOneDescDiag(Board, Rank, 1, Rank, Diag).
-testGetEveryDescDiagsHalfBoard(Start, ListDiags) :- board(Board), getEveryDescDiagsHalfBoard(Board, Start, ListDiags).
-testGetEveryDescDiags(ListDiags) :- board(Board), getEveryDescDiags(Board, ListDiags).
-testReverseBoard(ReversedColumnsBoard) :- board(Board), reverse(Board, ReversedBoard), reverseEveryColumns(ReversedBoard, ReversedColumnsBoard).
-
 %%% SOMMES DES JETONS SUR LES DIAGONALES
-testSumDiag(Player, Result) :- board(Board), getEveryDescDiags(Board, CompleteListDiags), sumDiag(Player, CompleteListDiags, Result).
 testGetDescDiagsCostList(Player, Sum) :- board(Board), getDescendingDiagsCostList(Board, Player, Sum).
 testGetAscDiagsCostList(Player, Sum) :- board(Board), getAscendingDiagsCostList(Board, Player, Sum).
 

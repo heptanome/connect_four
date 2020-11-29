@@ -2,6 +2,7 @@
 
 :- use_module(utilities, [isColumnFull/1, updateColumn/3]).
 :- use_module(firstHeuristic, [heuristic/3]).
+:- use_module(defense_heur, [heuristic_def/3]).
 
 % Usage : Passer le board actuel dans Board, il renverra un NextBoard possible
 %         dans la variable NextBoard. Si IndexColonne n'est pas specifie, il renverra
@@ -37,7 +38,10 @@ find_best_next_pos(Current,_,Value, Player, Heur) :-
 
 % Utilise l'heuristique pour calculer la valeur du coup (par default calcule juste une valeur random)
 value_of(Board, Player, Cost, 'first_heur') :-
-    heuristic(Board, Player, Cost).
+    heuristic(Board, Player, Cost), !.
+
+value_of(Board, Player, Cost,  'defense_heur') :-
+  heuristic_def(Board, Player, Cost), !.
 
 value_of(_, _, Value,_) :-
   Value is random(20), !.
