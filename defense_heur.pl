@@ -11,14 +11,17 @@
 heuristic_def(Board, Player, FinalCost) :-
     nonvar(Player),
     getColumnCostList(Board, Player, CostsListColumn),
-    max_list(CostsListColumn, MaxCostColumn),
+    sum_list(CostsListColumn, SumCostColumn),
     getRowCostList(Board, Player, CostsListRow),
-    max_list(CostsListRow, MaxCostRow),
+    sum_list(CostsListRow, SumCostRow),
     getDescendingDiagsCostList(Board, Player, CostsListDescDiags),
-    max_list(CostsListDescDiags, MaxCostDescDiags),
+    sum_list(CostsListDescDiags,SumCostDescDiags),
     getAscendingDiagsCostList(Board, Player, CostsListAscDiags),
-    max_list(CostsListAscDiags, MaxCostAscDiags),
-    FinalCost is max(MaxCostColumn, max(MaxCostRow, max(MaxCostDescDiags, MaxCostAscDiags))).
+    sum_list(CostsListAscDiags, SumCostAscDiags),
+    S1 is SumCostColumn,
+    S2 is S1 + SumCostRow,
+    S3 is S2 + SumCostDescDiags,
+    FinalCost is S3 + SumCostAscDiags.
 
 % Usage : Obtenir le nombre de jetons consécutifs alignés du joueur adverse sur chaque colonne du plateau
 %         On ne compte que les jetons du joueur qui sont au dessus du plus haut jeton du joueur actuel
@@ -113,19 +116,19 @@ sumDiag(Player, [Diag|Rest], [MaxCostDiag|ListSum]) :-
 
 %%% TESTS %%%
 board([['1', '1', '1', '2', '1', _], ['1', '2', '1', _, _, _], ['1', '2', '2', '2', _, _], ['2', '1', '1', '1', '2', '2'], ['2', '1', '2', '1', '2', _], ['2', '2', '2', '1', '1', _], ['1', _, _, _, _, _]]).
-board2([['1', '2', _, _, _, _], ['1', _, _, _, _, _], [_, _, _, _, _, _], [_, _, _, _, _, _], [_, _, _,_, _, _], ['2', _, _, _, _, _], [_, _, _, _, _, _]]).
+board2([['1', '2', _, _, _, _], [_, _, _, _, _, _], [_, _, _, _, _, _], [_, _, _, _, _, _], [_, _, _,_, _, _], [_, _, _, _, _, _], [_, _, _, _, _, _]]).
 
 
 %%% SOMMES DES JETONS SUR LES COLONNES
 testSumRow(Player, Sum, ListSum) :- sumRow(Player, [1, 2, 1, _, 1, 2, 1, 2, 1, 1, 2], Sum, ListSum).
-testGetColumnCostList(Player, List) :- board(Board), getColumnCostList(Board, Player, List).
+testGetColumnCostList(Player, List) :- board2(Board), getColumnCostList(Board, Player, List).
 
 %%% SOMMES DES JETONS SUR LES LIGNES
-testGetRowCostList(Player, Sum) :- board(Board), getRowCostList(Board, Player, Sum).
+testGetRowCostList(Player, Sum) :- board2(Board), getRowCostList(Board, Player, Sum).
 
 %%% SOMMES DES JETONS SUR LES DIAGONALES
-testGetDescDiagsCostList(Player, Sum) :- board(Board), getDescendingDiagsCostList(Board, Player, Sum).
-testGetAscDiagsCostList(Player, Sum) :- board(Board), getAscendingDiagsCostList(Board, Player, Sum).
+testGetDescDiagsCostList(Player, Sum) :- board2(Board), getDescendingDiagsCostList(Board, Player, Sum).
+testGetAscDiagsCostList(Player, Sum) :- board2(Board), getAscendingDiagsCostList(Board, Player, Sum).
 
 %%% HEURISTIC
-testHeuristic(Player, Cost) :- board(Board), heuristic_def(Board, Player, Cost).
+testHeuristic(Player, Cost) :- board2(Board), heuristic_def(Board, Player, Cost).
