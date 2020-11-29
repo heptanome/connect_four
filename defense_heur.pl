@@ -11,17 +11,22 @@
 heuristic_def(Board, Player, FinalCost) :-
     nonvar(Player),
     getColumnCostList(Board, Player, CostsListColumn),
-    sum_list(CostsListColumn, SumCostColumn),
+    max_list(CostsListColumn, MaxCostColumn),
+    %sum_list(CostsListColumn, SumCostColumn), 
     getRowCostList(Board, Player, CostsListRow),
-    sum_list(CostsListRow, SumCostRow),
+    max_list(CostsListRow, MaxCostRow),
+    %sum_list(CostsListRow, SumCostRow),writeln(SumCostRow),
     getDescendingDiagsCostList(Board, Player, CostsListDescDiags),
-    sum_list(CostsListDescDiags,SumCostDescDiags),
+    max_list(CostsListDescDiags, MaxCostDescDiags),
+    %sum_list(CostsListDescDiags,SumCostDescDiags),
     getAscendingDiagsCostList(Board, Player, CostsListAscDiags),
-    sum_list(CostsListAscDiags, SumCostAscDiags),
-    S1 is SumCostColumn,
-    S2 is S1 + SumCostRow,
-    S3 is S2 + SumCostDescDiags,
-    FinalCost is S3 + SumCostAscDiags.
+    max_list(CostsListAscDiags, MaxCostAscDiags),
+    %sum_list(CostsListAscDiags, SumCostAscDiags),
+    %FinalCost is max(MaxCostColumn, max(MaxCostRow, max(MaxCostDescDiags, MaxCostAscDiags))), writeln(FinalCost).
+    S1 is MaxCostColumn,
+    S2 is S1 + MaxCostRow,
+    S3 is S2 + MaxCostDescDiags,
+    FinalCost is S3 + MaxCostAscDiags.
 
 % Usage : Obtenir le nombre de jetons consécutifs alignés du joueur adverse sur chaque colonne du plateau
 %         On ne compte que les jetons du joueur qui sont au dessus du plus haut jeton du joueur actuel
@@ -72,9 +77,20 @@ getRowCostList([[H1|R1], [H2|R2], [H3|R3], [H4|R4], [H5|R5], [H6|R6], [H7|R7]], 
 % - Row     : ligne sur laquelle on calcule le nombre de jetons alignés
 % - Sum     : nombre de jetons alignés du joueur en début de ligne
 % - ListSum : liste des sommes des jetons consécutifs du joueur sur une ligne hors début de ligne
+%sumRow(_, [], 0, []).
+%sumRow(Player, [H|T], Sum, [NewSum|ListSum]) :-
+%    (var(H) ; H = Player),
+%    sumRow(Player, T, NewSum, ListSum),
+%    Sum is 0.
+%sumRow(Player, [H|T], Sum, ListSum) :-
+%    nonvar(H),
+%    H \= Player,
+%    sumRow(Player, T, NewSum, ListSum),
+%    Sum is NewSum+1.
 sumRow(_, [], 0, []).
-sumRow(Player, [H|T], Sum, [NewSum|ListSum]) :-
-    (var(H) ; H = Player),
+sumRow(Player, [H|T],Sum, [NewSum| ListSum]) :-
+    nonvar(H),
+    H = Player,
     sumRow(Player, T, NewSum, ListSum),
     Sum is 0.
 sumRow(Player, [H|T], Sum, ListSum) :-
@@ -82,6 +98,11 @@ sumRow(Player, [H|T], Sum, ListSum) :-
     H \= Player,
     sumRow(Player, T, NewSum, ListSum),
     Sum is NewSum+1.
+sumRow(Player, [H|T], Sum, ListSum) :-
+    var(H),
+    sumRow(Player, T, NewSum, ListSum),
+    Sum is NewSum.
+
 
 % Usage : Obtenir le nombre de jetons consécutifs alignés du joueur adverse
 %         sur les diagonales ascendantes numéro 4 à 9.
@@ -124,7 +145,7 @@ testSumRow(Player, Sum, ListSum) :- sumRow(Player, [1, 2, 1, _, 1, 2, 1, 2, 1, 1
 testGetColumnCostList(Player, List) :- board2(Board), getColumnCostList(Board, Player, List).
 
 %%% SOMMES DES JETONS SUR LES LIGNES
-testGetRowCostList(Player, Sum) :- board2(Board), getRowCostList(Board, Player, Sum).
+testGetRowCostList(Player, Sum) :- board(Board), getRowCostList(Board, Player, Sum).
 
 %%% SOMMES DES JETONS SUR LES DIAGONALES
 testGetDescDiagsCostList(Player, Sum) :- board2(Board), getDescendingDiagsCostList(Board, Player, Sum).
