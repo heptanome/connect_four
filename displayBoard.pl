@@ -1,27 +1,27 @@
 :- module(displayBoard, [displayBoard/1]).
 
-%Affichage du jeu : ligne par ligne
-displayBoard(B) :-
+% Usage : Afficher le plateau ligne par ligne.
+displayBoard(Board) :-
     writeln('*------------*'),
-    printLigne(6,B), printLigne(5,B), printLigne(4,B),
-    printLigne(3,B), printLigne(2,B), printLigne(1,B),
+    printRow(6,Board), printRow(5,Board), printRow(4,Board),
+    printRow(3,Board), printRow(2,Board), printRow(1,Board),
     writeln('*------------*'),
     writeln('').
 
-%Affichage d une ligne
-printLigne(L, B) :-
-    nth1(1,B,C1), printVal(C1,L),
-    nth1(2,B,C2), printVal(C2,L),
-    nth1(3,B,C3), printVal(C3,L),
-    nth1(4,B,C4), printVal(C4,L),
-    nth1(5,B,C5), printVal(C5,L),
-    nth1(6,B,C6), printVal(C6,L),
-    nth1(7,B,C7), printVal(C7,L),
+% Usage : Afficher une ligne.
+printRow(Row, Board) :-
+    nth1(1,Board,C1), printVal(C1,Row),
+    nth1(2,Board,C2), printVal(C2,Row),
+    nth1(3,Board,C3), printVal(C3,Row),
+    nth1(4,Board,C4), printVal(C4,Row),
+    nth1(5,Board,C5), printVal(C5,Row),
+    nth1(6,Board,C6), printVal(C6,Row),
+    nth1(7,Board,C7), printVal(C7,Row),
     writeln('').
 
-%Afficher le contenu de la case a l indice N de la colonne C (?, x or o)
-printVal(C,N) :-
-    nth1(N,C,Val), var(Val), write('  '), ! .
-printVal(C,N) :-
-    nth1(N,C,Val), write(Val), write(' ').
-
+% Usage : Afficher le contenu de la case à l'indice N de la colonne C
+% c'est à dire soit un ' ' si la case est vide sinon le numéro du joueur (1 ou 2).
+printVal(Column,Index) :-
+    nth1(Index, Column, Value), var(Value), write('  '), ! .
+printVal(Column,Index) :-
+    nth1(Index,Column,Value), write(Value), write(' ').

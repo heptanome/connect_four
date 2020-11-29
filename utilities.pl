@@ -1,9 +1,14 @@
-:- module(utilities, [updateColonne/3, isColonneFull/1]).
+:- module(utilities, [updateColumn/3, isColumnFull/1]).
 
-updateColonne(Colonne,NewColonne, Player) :-
-    Colonne = NewColonne,
-    nth1(Index,Colonne,X), var(X),!,
-    nth1(Index, NewColonne, Player).
+% Usage : Jouer un jeton du joueur Player dans une colonne spécifique.
+%         Ceci revient à ajouter un jeton du joueur dans la première case vide de la colonne
+updateColumn(Column, NewColumn, Player) :-
+    Column = NewColumn,
+    nth1(Index, Column, Value),
+    var(Value),
+    !,
+    nth1(Index, NewColumn, Player).
 
-isColonneFull(C) :-
-    nth1(6, C, X), nonvar(X).
+% Usage : Vérifier si une colonne est pleine
+isColumnFull(Column) :-
+    nth1(6, Column, Value), nonvar(Value).
