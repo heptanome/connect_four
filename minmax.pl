@@ -1,12 +1,12 @@
-:- module(minmax, [find_best_next_pos/5]).
+:- module(minmax, [minmax/5]).
 
 :- use_module(utilities, [isColumnFull/1, updateColumn/3]).
 :- use_module(firstHeuristic, [heuristic/3]).
 :- use_module(defense_heur, [heuristic_def/3]).
 
 % Usage : Passer le board actuel dans Board, il renverra un NextBoard possible
-%         dans la variable NextBoard. Si IndexColonne n'est pas specifie, il renverra
-%         tous les moves possibles atteignables
+%         dans la variable NextBoard. Si IndexColonne n'est pas specifie, il
+%         renverra tous les moves possibles atteignables
 possible_move(Board, NextBoard, Player) :-
   Board=NextBoard,
   nth1(IndexColumn, Board, Column),
@@ -18,14 +18,15 @@ possible_move(Board, NextBoard, Player) :-
 compare(Pos1,Val1,   _,Val2,Pos1,Val1) :- Val1 < Val2, !.
 compare(   _,Val1,Pos2,Val2,Pos2,Val2) :- Val2 =< Val1.
 
-% Usage : Chercher la meilleure disposition du plateau atteignable depuis la disposition initiale du plateau 
+% Usage : Chercher la meilleure disposition du plateau atteignable depuis la
+% disposition initiale du plateau 
 %         Y prend la valeur de cette position.
-% find_best_next_pos(+Current,-BestNext,-Value,+Player) :
+% minmax(+Current,-BestNext,-Value,+Player) :
 %  - Current  : dispostion du plateau actuel
 %  - BestNext : la meilleure disposition du plateau
 %  - Value    : valeur non écrite mais renvoyée
 %  - Player   : Numéro du joueur actuel (1 ou 2)
-find_best_next_pos(Current,BestNext,Value,Player, Heur) :-
+minmax(Current,BestNext,Value,Player, Heur) :-
   findall(NextPos, possible_move(Current,NextPos,Player),ListNextPos),
   ListNextPos \== [],
   best_of_list(ListNextPos, BestNext, Value, Player, Heur),!.
@@ -33,10 +34,11 @@ find_best_next_pos(Current,BestNext,Value,Player, Heur) :-
 
 % si possible_move(current,nextPos) ne revoie aucune valeur pour nextPos,
 % alors c'est que current n'a pas de successeur :
-find_best_next_pos(Current,_,Value, Player, Heur) :-
+minmax(Current,_,Value, Player, Heur) :-
   value_of(Current,Player, Value,Heur).
 
-% Utilise l'heuristique pour calculer la valeur du coup (par default calcule juste une valeur random)
+% Utilise l'heuristique pour calculer la valeur du coup (par default calcule
+% juste une valeur random)
 value_of(Board, Player, Cost, 'first_heur') :-
     heuristic(Board, Player, Cost), !.
 

@@ -2,7 +2,7 @@
 
 :- use_module(displayBoard, [displayBoard/1]).
 :- use_module(winner, [winner/2]).
-:- use_module(minmax, [find_best_next_pos/5]).
+:- use_module(minmax, [minmax/5]).
 :- use_module(utilities, [isColumnFull/1, updateColumn/3]).
 
 % Usage : Regarder si le jeu est fini
@@ -22,7 +22,7 @@ changePlayer('2','1').
 
 %IA ernvoie colonne complete
 % Usage : Calcule un coup optimum pour gagner une partie : IA renvoie une colonne complete avec son coup
-ia(Board, BestNext, Value, Player, Heur) :- find_best_next_pos(Board, BestNext, Value, Player, Heur).
+ia(Board, BestNext, Value, Player, Heur) :- minmax(Board, BestNext, Value, Player, Heur).
 
 % Usage : Récupérer le coup du joueur Humain
 readColumn(X) :-
