@@ -36,16 +36,16 @@ call_minmax(Board, Player, Heur, BestBoard, BestVal) :-
     minmax_breadth(PossibleBoards, Opponent, Heur, 'min', BestBoard, BestVal),
     writeln(BestVal).
 
+% breadth: look at "brother" boards
 minmax_breadth([Board], Player, Heur, MaximPlayer, Board, Val) :-
-    %value_of(Board, Player, Val, Heur).
     minmax_depth(Board, Player, Heur, MaximPlayer, Val).
 
 minmax_breadth([Board1 | Tail], Player, Heur, MaximPlayer, BestBoard, BestVal) :-
-    %minmax_depth(Board1, Player, Heur, MaximPlayer, _, Val1),
     value_of(Board1, Player, Val1, Heur),
     minmax_breadth(Tail, Player, Heur, MaximPlayer, Board2, Val2),
     comp_best_val(MaximPlayer, Val1, Board1, Val2, Board2, BestVal, BestBoard), !. 
 
+% depth: look at "children" boards (nodes)
 minmax_depth(Board, Player, Heur, MaximPlayer, BestVal) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
     PossibleBoards \== [],
