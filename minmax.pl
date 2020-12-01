@@ -34,32 +34,39 @@ changeMaximizing('min', 'max').
 call_minmax(Board, Player, Heur, BestBoard, BestVal) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
     PossibleBoards \== [],
-    minmax_breadth(PossibleBoards, Player, Heur, 'min', 1, BestBoard, BestVal).
+    changePlayer(Player, Opponent),
+    minmax_breadth(PossibleBoards, Opponent, Heur, 'min', 1, BestBoard, BestVal),
+    write('Bestval: '), writeln(BestVal).
 
 % breadth: look at "brother" boards
 minmax_breadth([Board], Player, Heur, MaximPlayer, Depth, Board, Val) :-
     NewDepth is Depth - 1,
-    minmax_depth(Board, Player, Heur, MaximPlayer, NewDepth, Val).
+    changeMaximizing(MaximPlayer, MaximOpponent),
+    changePlayer(Player, Opponent),
+    minmax_depth(Board, Opponent, Heur, MaximOpponent, NewDepth, Val).
 
 minmax_breadth([Board1 | Tail], Player, Heur, MaximPlayer, Depth, BestBoard, BestVal) :-
     NewDepth is Depth - 1,
-    minmax_depth(Board1, Player, Heur, MaximPlayer, NewDepth, Val1),
+    changeMaximizing(MaximPlayer, MaximOpponent),
+    changePlayer(Player, Opponent),
+    minmax_depth(Board1, Opponent, Heur, MaximOpponent, NewDepth, Val1),
     minmax_breadth(Tail, Player, Heur, MaximPlayer, Depth, Board2, Val2),
     comp_best_val(MaximPlayer, Val1, Board1, Val2, Board2, BestVal, BestBoard), !. 
 
 % depth: look at "children" boards (nodes)
 minmax_depth(Board, Player, Heur, _, 0, Val) :-
-    value_of(Board, Player, Val, Heur), !.
+    value_of(Board, Player, Val, Heur), writeln(Val), !.
 
 minmax_depth(Board, Player, Heur, MaximPlayer, Depth, BestVal) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
     PossibleBoards \== [],
-    changeMaximizing(MaximPlayer, MaximOpponent),
-    changePlayer(Player, Opponent),
-    minmax_breadth(PossibleBoards, Opponent, Heur, MaximOpponent, Depth, _, BestVal).
+    minmax_breadth(PossibleBoards, Player, Heur, MaximPlayer, Depth, _, BestVal).
+    %changeMaximizing(MaximPlayer, MaximOpponent),
+    %changePlayer(Player, Opponent),
+    %minmax_breadth(PossibleBoards, Opponent, Heur, MaximOpponent, Depth, _, BestVal).
 
 minmax_depth(Board, Player, Heur, _, _, Val) :-
-    value_of(Board, Player, Val, Heur), !.
+    value_of(Board, Player, Val, Heur), writeln(Val), !.
 
 /*
 minmax(Board,BestBoard,BestValue,Player,Heur,Depth, 0) :-
@@ -100,13 +107,14 @@ compare_boards(_,Value1,Board2,Value2,Board2,Value2) :-
 % Utilise l heuristique pour calculer la valeur du coup (par default calcule
 % juste une valeur random)
 value_of(Board, Player, Cost, 'attack_heur_max') :-
-    heuristic_max(Board, Player, Cost), !.
+    heuristic_max(Board, Player, Cost).
     
 value_of(Board, Player, Cost, 'attack_heur_sum') :-
-    heuristic_sum(Board, Player, Cost), !.
+    heuristic_sum(Board, Player, Cost).
     
  value_of(Board, Player, Cost, 'attack_heur_alert') :-
-    heuristic_alert(Board, Player, Cost), !.
+    heuristic_alert(Board, Player, Cost),
+    writeln(Cost + " " + Player).
 
 value_of(Board, Player, Cost,  'defense_heur') :-
     heuristic_def(Board, Player, Cost), !.

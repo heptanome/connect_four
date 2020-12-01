@@ -1,5 +1,6 @@
 :- module(attack_heuristics, [heuristic_max/3, heuristic_sum/3, heuristic_alert/3]).
 
+:- use_module(displayBoard, [displayBoard/1]).
 :- use_module(utilities_attack_heur, [getColumnCostList/3, getRowCostList/3, getAscendingDiagsCostList/3, getDescendingDiagsCostList/3]).
 
 % Usage : Obtenir le coût de la dispotion actuelle du plateau en
@@ -11,6 +12,7 @@
 % - FinalCost : cout de la dispostion du plateau
 heuristic_max(Board, Player, FinalCost) :-
     nonvar(Player),
+    displayBoard(Board),
     getColumnCostList(Board, Player, CostsListColumn),
     max_list(CostsListColumn, MaxCostColumn),
     getRowCostList(Board, Player, CostsListRow),
@@ -51,10 +53,11 @@ heuristic_sum(Board, Player, FinalCost) :-
 % - FinalCost : cout de la dispostion du plateau
 heuristic_alert(Board, Player, FinalCost) :-
     nonvar(Player),
+    displayBoard(Board),
     getColumnCostList(Board, Player, CostsListColumn),
-	help_heuristic_alert(CostsListColumn, MaxCostColumns),
+	  help_heuristic_alert(CostsListColumn, MaxCostColumns),
     getRowCostList(Board, Player, CostsListRow),
-	help_heuristic_alert(CostsListRow, MaxCostRows),
+	  help_heuristic_alert(CostsListRow, MaxCostRows),
     getDescendingDiagsCostList(Board, Player, CostsListDescDiags),
     help_heuristic_alert(CostsListDescDiags, MaxCostDescDiags),
     getAscendingDiagsCostList(Board, Player, CostsListAscDiags),
