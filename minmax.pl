@@ -33,27 +33,34 @@ call_minmax(Board, Player, Heur, BestBoard, BestVal) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
     PossibleBoards \== [],
     changePlayer(Player, Opponent),
-    minmax_breadth(PossibleBoards, Opponent, Heur, 'min', BestBoard, BestVal),
+    minmax_breadth(PossibleBoards, Opponent, Heur, 'min', 3, BestBoard, BestVal),
+    writeln('Best val:'),
     writeln(BestVal).
 
 % breadth: look at "brother" boards
-minmax_breadth([Board], Player, Heur, MaximPlayer, Board, Val) :-
-    minmax_depth(Board, Player, Heur, MaximPlayer, Val).
+minmax_breadth([Board], Player, Heur, MaximPlayer, Depth, Board, Val) :-
+    NewDepth is Depth - 1,
+    minmax_depth(Board, Player, Heur, MaximPlayer, NewDepth, Val).
 
-minmax_breadth([Board1 | Tail], Player, Heur, MaximPlayer, BestBoard, BestVal) :-
-    value_of(Board1, Player, Val1, Heur),
-    minmax_breadth(Tail, Player, Heur, MaximPlayer, Board2, Val2),
+minmax_breadth([Board1 | Tail], Player, Heur, MaximPlayer, Depth, BestBoard, BestVal) :-
+    %value_of(Board1, Player, Val1, Heur),
+    NewDepth is Depth - 1,
+    minmax_depth(Board1, Player, Heur, MaximPlayer, NewDepth, Val1),
+    minmax_breadth(Tail, Player, Heur, MaximPlayer, Depth, Board2, Val2),
     comp_best_val(MaximPlayer, Val1, Board1, Val2, Board2, BestVal, BestBoard), !. 
 
 % depth: look at "children" boards (nodes)
-minmax_depth(Board, Player, Heur, MaximPlayer, BestVal) :-
+minmax_depth(Board, Player, Heur, _, 0, Val) :-
+    value_of(Board, Player, Val, Heur), writeln(Val), !.
+
+minmax_depth(Board, Player, Heur, MaximPlayer, Depth, BestVal) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
     PossibleBoards \== [],
     changeMaximizing(MaximPlayer, MaximOpponent),
     changePlayer(Player, Opponent),
-    minmax_breadth(PossibleBoards, Opponent, Heur, MaximOpponent, _, BestVal).
+    minmax_breadth(PossibleBoards, Opponent, Heur, MaximOpponent, Depth, _, BestVal).
 
-minmax_depth(Board, Player, Heur, _, Val) :-
+minmax_depth(Board, Player, Heur, _, _, Val) :-
     value_of(Board, Player, Val, Heur), !.
 
 /*
