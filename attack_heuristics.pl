@@ -19,7 +19,7 @@ heuristic_max(Board, Player, FinalCost) :-
     max_list(CostsListDescDiags, MaxCostDescDiags),
     getAscendingDiagsCostList(Board, Player, CostsListAscDiags),
     max_list(CostsListAscDiags, MaxCostAscDiags),
-    FinalCost is 4-max(MaxCostColumn, max(MaxCostRow, max(MaxCostDescDiags, MaxCostAscDiags))).
+    FinalCost is -max(MaxCostColumn, max(MaxCostRow, max(MaxCostDescDiags, MaxCostAscDiags))).
     
 % Usage : Obtenir le coût de la dispotion actuelle du plateau en
 %         cherchant la somme du nombre max de jetons alignés sur une ligne, une colonne,
@@ -39,23 +39,7 @@ heuristic_sum(Board, Player, FinalCost) :-
     getAscendingDiagsCostList(Board, Player, CostsListAscDiags),
     max_list(CostsListAscDiags, MaxCostAscDiags),
     Max is MaxCostColumn + MaxCostRow + MaxCostDescDiags + MaxCostAscDiags,
-    FinalCost is 16-Max.
-
-printVal([]) :-
-    writeln('').
-printVal([H|T]) :-
-    write(H), write(' '), printVal(T).
-    
-printAll(CostsListColumn, CostsListRow, CostsListDescDiags, CostsListAscDiags) :-
-	write('Column     : '),
-    printVal(CostsListColumn),
-    write('Row        : '),
-    printVal(CostsListRow),
-    write('Desc Diags : '),
-    printVal(CostsListDescDiags),
-    write('Asc Diags  : '),
-    printVal(CostsListAscDiags),
-    writeln('').
+    FinalCost is -Max.
 
 % Usage : Obtenir le coût de la dispotion actuelle du plateau en
 %         cherchant la somme du nombre max de jetons alignés sur une ligne, une colonne,
@@ -77,7 +61,7 @@ heuristic_alert(Board, Player, FinalCost) :-
     help_heuristic_alert(CostsListAscDiags, MaxCostAscDiags),
     printVal([MaxCostColumns, MaxCostRows, MaxCostDescDiags, MaxCostAscDiags]),
     Max is MaxCostColumns + MaxCostRows + MaxCostDescDiags + MaxCostAscDiags,
-    FinalCost is 16-Max.  
+    FinalCost is -Max.  
     
 help_heuristic_alert(CostsList, FinalCost) :-
 	max_list(CostsList, MaxCost),
@@ -87,3 +71,20 @@ help_heuristic_alert(CostsList, FinalCost) :-
 help_heuristic_alert(CostsList, MaxCost) :-
 	max_list(CostsList, MaxCost),
 	MaxCost < 4.
+
+%%%% TO REMOVE : DISPLAY CURRENT VALUES
+printAll(CostsListColumn, CostsListRow, CostsListDescDiags, CostsListAscDiags) :-
+	write('Column     : '),
+    printVal(CostsListColumn),
+    write('Row        : '),
+    printVal(CostsListRow),
+    write('Desc Diags : '),
+    printVal(CostsListDescDiags),
+    write('Asc Diags  : '),
+    printVal(CostsListAscDiags),
+    writeln('').
+    
+printVal([]) :-
+    writeln('').
+printVal([H|T]) :-
+    write(H), write(' '), printVal(T).
