@@ -96,3 +96,36 @@ sumDiag(Player, [Diag|Rest], [MaxCostDiag|ListSum]) :-
     sumRow(Player, Diag, LastSum, ListCost),
     max_list([LastSum|ListCost], MaxCostDiag),
     sumDiag(Player, Rest, ListSum).
+
+
+%%% JE VOUS PRESENTE LA BONNE PUTAIN DE VERSION DE SUM QUI FAIT UN TRCU PAS TROP CON POUR UNE FOIS
+%%% POUR L'UTILISER IL FAUT FAIRE SUMROW(+PLAYER, +BOARD, -POSITION, -LASTSUM, -LIST)
+%%% APRES AVOIR FAIT APPEL IL FAUT CONCATENER SUM ET LIST SI POSITION EST SUPERIEUR OU EGAL A 4
+%%% SI POSITION EST STRICTEMENT INFERIEUR A 4 ALORS ON UTILISE JUSTE LIST
+%%% VOILA C'EST TOUT POUR MOI. LA BISE <3
+  
+sum(_, [], 0, 0, []).
+sum(Player, [H|T], Position, NewSum, ListSum) :-
+    var(H),
+    sum(Player, T, NewPosition, NewSum, ListSum),
+    Position is NewPosition+1.
+sum(Player, [H|T], Position, Sum, [NewSum|ListSum]) :-
+    nonvar(H),
+    H \= Player,
+    sum(Player, T, NewPosition, NewSum, ListSum),
+    NewPosition >= 4,
+    Sum is 0,
+    Position is 0.
+sum(Player, [H|T], Position, Sum, ListSum) :-
+    nonvar(H),
+    H \= Player,
+    sum(Player, T, NewPosition, _, ListSum),
+    NewPosition < 4,
+    Sum is 0,
+    Position is 0.
+sum(Player, [H|T], Position, Sum, ListSum) :-
+    nonvar(H),
+    H = Player, 
+    sum(Player, T, NewPosition, NewSum, ListSum),
+    Sum is NewSum+1,
+    Position is NewPosition+1.
