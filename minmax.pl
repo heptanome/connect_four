@@ -1,7 +1,7 @@
 :- module(minmax, [call_minmax/5]).
 
-:- use_module(utilities, [isColumnFull/1, updateColumn/3,changePlayer/2]).
-:- use_module(firstHeuristic, [heuristic/3]).
+:- use_module(utilities, [isColumnFull/1, updateColumn/3]).
+:- use_module(attack_heuristics, [heuristic_max/3, heuristic_sum/3, heuristic_alert/3]).
 :- use_module(defense_heur, [heuristic_def/3]).
 
 % Usage : Passer le board actuel dans Board, il renverra un NextBoard possible
@@ -94,8 +94,14 @@ compare_boards(_,Value1,Board2,Value2,Board2,Value2) :-
 
 % Utilise l heuristique pour calculer la valeur du coup (par default calcule
 % juste une valeur random)
-value_of(Board, Player, Cost, 'first_heur') :-
-    heuristic(Board, Player, Cost), !.
+value_of(Board, Player, Cost, 'attack_heur_max') :-
+    heuristic_max(Board, Player, Cost).
+    
+value_of(Board, Player, Cost, 'attack_heur_sum') :-
+    heuristic_sum(Board, Player, Cost).
+    
+ value_of(Board, Player, Cost, 'attack_heur_alert') :-
+    heuristic_alert(Board, Player, Cost).
 
 value_of(Board, Player, Cost,  'defense_heur') :-
     heuristic_def(Board, Player, Cost), !.
