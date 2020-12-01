@@ -1,11 +1,11 @@
-:- module(minmax, [minmax/5]).
+:- module(minmax, [minmax/6]).
 
-:- use_module(utilities, [isColumnFull/1, updateColumn/3]).
+:- use_module(utilities, [isColumnFull/1, updateColumn/3,changePlayer/2]).
 :- use_module(firstHeuristic, [heuristic/3]).
 :- use_module(defense_heur, [heuristic_def/3]).
 
 % Usage : Passer le board actuel dans Board, il renverra un NextBoard possible
-%         dans la variable NextBoard. Si IndexColonne n'est pas specifie, il
+%         dans la variable NextBoard. Si IndexColonne n est pas specifie, il
 %         renverra tous les moves possibles atteignables
 possible_move(Board, NextBoard, Player) :-
   Board=NextBoard,
@@ -13,10 +13,31 @@ possible_move(Board, NextBoard, Player) :-
   not(isColumnFull(Column)),
   updateColumn(Column, NewColumn, Player),
   nth1(IndexColumn, NextBoard, NewColumn).
+  
+minmax(Board,BestBoard,BestValue,Player,Heur,0) :-
+    value_of(Board,Player,Value1,Heur),
+    compare_boards(Board,Value1,BestBoard,BestValue,TmpBoard,TmpValue),
+    writeln(Value1+"    "+BestValue),
+    BestBoard = TmpBoard,
+    BestValue = TmpValue,
+    !.
+
+minmax(Board,BestBoard,BestValue,Player,Heur,Depth) :-
+    possible_move(Board,NextBoard,Player),
+    NewDepth is Depth-1,
+    changePlayer(Player,Opponent),
+    minmax(NextBoard,BestBoard,BestValue,Opponent,Heur,NewDepth).
 
 % Usage : si val1 > val2 on dit que pos1 est a garder et vice-versa.
-compare(Pos1,Val1,   _,Val2,Pos1,Val1) :- Val1 < Val2, !.
-compare(   _,Val1,Pos2,Val2,Pos2,Val2) :- Val2 =< Val1.
+% compare(Pos1,Val1,   _,Val2,Pos1,Val1) :- Val1 < Val2, !.
+% compare(   _,Val1,Pos2,Val2,Pos2,Val2) :- Val2 =< Val1.
+
+compare_boards(Board1,Value1,_,Value2,Board1,Value1) :-
+    Value1 < Value2,
+    !.
+
+compare_boards(_,Value1,Board2,Value2,Board2,Value2) :-
+    Value2 =< Value1.
 
 % Usage : Chercher la meilleure disposition du plateau atteignable depuis la
 % disposition initiale du plateau 
@@ -26,18 +47,18 @@ compare(   _,Val1,Pos2,Val2,Pos2,Val2) :- Val2 =< Val1.
 %  - BestNext : la meilleure disposition du plateau
 %  - Value    : valeur non écrite mais renvoyée
 %  - Player   : Numéro du joueur actuel (1 ou 2)
-minmax(Current,BestNext,Value,Player, Heur) :-
-  findall(NextPos, possible_move(Current,NextPos,Player),ListNextPos),
-  ListNextPos \== [],
-  best_of_list(ListNextPos, BestNext, Value, Player, Heur),!.
-  % on s arrete dès qu'on a un meilleur element
+% minmax(Current,BestNext,Value,Player, Heur) :-
+%  findall(NextPos, possible_move(Current,NextPos,Player),ListNextPos),
+%  ListNextPos \== [],
+%  best_of_list(ListNextPos, BestNext, Value, Player, Heur),!.
+%  on s arrete dès qu on a un meilleur element
 
 % si possible_move(current,nextPos) ne revoie aucune valeur pour nextPos,
-% alors c'est que current n'a pas de successeur :
-minmax(Current,_,Value, Player, Heur) :-
-  value_of(Current,Player, Value,Heur).
+% alors c est que current n a pas de successeur :
+% minmax(Current,_,Value, Player, Heur) :-
+%  value_of(Current,Player, Value,Heur).
 
-% Utilise l'heuristique pour calculer la valeur du coup (par default calcule
+% Utilise l heuristique pour calculer la valeur du coup (par default calcule
 % juste une valeur random)
 value_of(Board, Player, Cost, 'first_heur') :-
     heuristic(Board, Player, Cost), !.

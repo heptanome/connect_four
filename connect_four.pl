@@ -16,10 +16,6 @@ isBoardFull([H|C]) :- isColumnFull(H), isBoardFull(C).
 % Usage : Appliquer le coup du joueur
 applyIt(Board,NewBoard) :- retract(board(Board)), assert(board(NewBoard)).
 
-% Usage : Changer le joueur
-changePlayer('1','2').
-changePlayer('2','1').
-
 %IA ernvoie colonne complete
 % Usage : Calcule un coup optimum pour gagner une partie : IA renvoie une colonne complete avec son coup
 ia(Board, BestNext, Value, Player, Heur) :- minmax(Board, BestNext, Value, Player, Heur).
