@@ -2,8 +2,8 @@
 
 :- use_module(displayBoard, [displayBoard/1]).
 :- use_module(winner, [winner/2]).
-:- use_module(minmax, [minmax/5]).
-:- use_module(utilities, [isColumnFull/1, updateColumn/3]).
+:- use_module(minmax, [call_minmax/5]).
+:- use_module(utilities, [changePlayer/2, isColumnFull/1, updateColumn/3]).
 
 % Usage : Regarder si le jeu est fini
 gameover(Winner) :- board(Board), winner(Board, Winner), !.
@@ -18,7 +18,8 @@ applyIt(Board,NewBoard) :- retract(board(Board)), assert(board(NewBoard)).
 
 %IA ernvoie colonne complete
 % Usage : Calcule un coup optimum pour gagner une partie : IA renvoie une colonne complete avec son coup
-ia(Board, BestNext, Value, Player, Heur) :- minmax(Board, BestNext, Value, Player, Heur).
+%ia(Board, BestNext, Value, Player, Heur) :- minmax(Board, BestNext, Value, Player, Heur).
+ia(Board, BestNext, Value, Player, Heur) :- call_minmax(Board, Player, Heur, BestNext, Value).
 
 % Usage : Récupérer le coup du joueur Humain
 readColumn(X) :-

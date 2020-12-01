@@ -1,4 +1,4 @@
-:- module(minmax, [minmax/6]).
+:- module(minmax, [call_minmax/5]).
 
 :- use_module(utilities, [isColumnFull/1, updateColumn/3,changePlayer/2]).
 :- use_module(firstHeuristic, [heuristic/3]).
@@ -13,21 +13,55 @@ possible_move(Board, NextBoard, Player) :-
   not(isColumnFull(Column)),
   updateColumn(Column, NewColumn, Player),
   nth1(IndexColumn, NextBoard, NewColumn).
-  
-minmax(Board,BestBoard,BestValue,Player,Heur,0) :-
-    value_of(Board,Player,Value1,Heur),
-    compare_boards(Board,Value1,BestBoard,BestValue,TmpBoard,TmpValue),
-    writeln(Value1+"    "+BestValue),
-    BestBoard = TmpBoard,
-    BestValue = TmpValue,
-    !.
 
-minmax(Board,BestBoard,BestValue,Player,Heur,Depth) :-
-    possible_move(Board,NextBoard,Player),
-    NewDepth is Depth-1,
-    changePlayer(Player,Opponent),
-    minmax(NextBoard,BestBoard,BestValue,Opponent,Heur,NewDepth).
+comp_best_val('max', Val1, Board1, Val2, _, Val1, Board1) :-
+    Val1 >= Val2.
 
+comp_best_val('max', Val1, _, Val2, Board2, Val2, Board2) :-
+    Val1 < Val2.
+
+comp_best_val('min', Val1, Board1, Val2, _, Val1, Board1) :-
+    Val1 < Val2.
+
+comp_best_val('min', Val1, _, Val2, Board2, Val2, Board2) :-
+    Val1 >= Val2.
+
+changeMaximizing('max', 'min').
+changeMaximizing('min', 'max').
+
+call_minmax(Board, Player, Heur, BestBoard, BestVal) :-
+    findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
+    PossibleBoards \== [],
+    changePlayer(Player, Opponent),
+    minmax_breadth(PossibleBoards, Opponent, Heur, 'min', BestBoard, BestVal),
+    writeln(BestVal).
+
+minmax_breadth([Board], Player, Heur, MaximPlayer, Board, Val) :-
+    %value_of(Board, Player, Val, Heur).
+    minmax_depth(Board, Player, Heur, MaximPlayer, Val).
+
+minmax_breadth([Board1 | Tail], Player, Heur, MaximPlayer, BestBoard, BestVal) :-
+    %minmax_depth(Board1, Player, Heur, MaximPlayer, _, Val1),
+    value_of(Board1, Player, Val1, Heur),
+    minmax_breadth(Tail, Player, Heur, MaximPlayer, Board2, Val2),
+    comp_best_val(MaximPlayer, Val1, Board1, Val2, Board2, BestVal, BestBoard), !. 
+
+minmax_depth(Board, Player, Heur, MaximPlayer, BestVal) :-
+    findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
+    PossibleBoards \== [],
+    changeMaximizing(MaximPlayer, MaximOpponent),
+    changePlayer(Player, Opponent),
+    minmax_breadth(PossibleBoards, Opponent, Heur, MaximOpponent, _, BestVal).
+
+minmax_depth(Board, Player, Heur, _, Val) :-
+    value_of(Board, Player, Val, Heur), !.
+
+/*
+minmax(Board,BestBoard,BestValue,Player,Heur,Depth, 0) :-
+    findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
+    NextDepth is Depth - 1,
+    foldl(get_max_val, PossibleBoards, 0, BestBoard, BestValue, Player, Heur, NextDepth).
+*/
 % Usage : si val1 > val2 on dit que pos1 est a garder et vice-versa.
 % compare(Pos1,Val1,   _,Val2,Pos1,Val1) :- Val1 < Val2, !.
 % compare(   _,Val1,Pos2,Val2,Pos2,Val2) :- Val2 =< Val1.
@@ -64,10 +98,10 @@ value_of(Board, Player, Cost, 'first_heur') :-
     heuristic(Board, Player, Cost), !.
 
 value_of(Board, Player, Cost,  'defense_heur') :-
-  heuristic_def(Board, Player, Cost), !.
+    heuristic_def(Board, Player, Cost), !.
 
-value_of(_, _, Value,_) :-
-  Value is random(20), !.
+value_of(_, _, Value, _) :-
+    Value is random(20), !.
 
 % best_of_list: d'apres la liste de tous les prochains coups possibles,
 % recuperation du meilleur coup a jouer en fonction de l'heuristique (TODO).
