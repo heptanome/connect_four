@@ -13,17 +13,17 @@
 heuristic_def(Board, Player, FinalCost) :-
     nonvar(Player),
     getColumnCostList(Board, Player, CostsListColumn),
-    max_list(CostsListColumn, MaxCostColumn),
+    max_list(CostsListColumn, MaxCostColumn), writeln(MaxCostColumn),
     getRowCostList(Board, Player, CostsListRow),
-    max_list(CostsListRow, MaxCostRow),
+    max_list(CostsListRow, MaxCostRow), writeln(MaxCostRow),
     getDescendingDiagsCostList(Board, Player, CostsListDescDiags),
-    max_list(CostsListDescDiags, MaxCostDescDiags),
+    max_list(CostsListDescDiags, MaxCostDescDiags), writeln(MaxCostDescDiags),
     getAscendingDiagsCostList(Board, Player, CostsListAscDiags),
-    max_list(CostsListAscDiags, MaxCostAscDiags),
+    max_list(CostsListAscDiags, MaxCostAscDiags), writeln(MaxCostAscDiags),
     S1 is MaxCostColumn,
     S2 is S1 + MaxCostRow,
     S3 is S2 + MaxCostDescDiags,
-    FinalCost is S3 + MaxCostAscDiags.
+    FinalCost is S3 + MaxCostAscDiags,writeln(FinalCost),writeln('').
 
 % Usage : Obtenir le nombre de jetons consécutifs alignés du joueur adverse sur chaque colonne du plateau
 %         On ne compte que les jetons  qui sont au dessus du plus haut jeton du joueur actuel
