@@ -1,13 +1,13 @@
-:- module(firstHeuristic, [heuristic/3]).
+:- module(secondHeuristic, [heuristicSecond/3]).
 
 % Usage : Obtenir le coût de la dispotion actuelle du plateau en
 %         cherchant le nombre maximum de jetons alignés du joueur actuel sur le plateau.
 %         Ces jetons peuvent être aligné sur une ligne, une colonne ou une diagonale.
-% heuristic(+Board, +Player, -FinalCost) :
+% heuristicSecond(+Board, +Player, -FinalCost) :
 % - Board     : état du plateau après avoir joué le coup
 % - Player    : numéro du joueur actuel
 % - FinalCost : cout de la dispostion du plateau
-heuristic(Board, Player, FinalCost) :-
+heuristicSecond(Board, Player, FinalCost) :-
     nonvar(Player),
     getColumnCostList(Board, Player, CostsListColumn),
     write('Column     : '),
@@ -26,7 +26,8 @@ heuristic(Board, Player, FinalCost) :-
     printVal(CostsListAscDiags),
     writeln(''),
     max_list(CostsListAscDiags, MaxCostAscDiags),
-    FinalCost is 4-max(MaxCostColumn, max(MaxCostRow, max(MaxCostDescDiags, MaxCostAscDiags))).
+    Max is MaxCostColumn + MaxCostRow + MaxCostDescDiags + MaxCostAscDiags,
+    FinalCost is 16-Max.
 
 printVal([]) :-
     writeln('').
@@ -83,7 +84,7 @@ getRowCostList([[H1|R1], [H2|R2], [H3|R3], [H4|R4], [H5|R5], [H6|R6], [H7|R7]], 
 % - ListSum : liste des sommes des jetons consécutifs du joueur sur une ligne hors début de ligne
 sumRow(_, [], 0, []).
 sumRow(Player, [H|T], Sum, [NewSum|ListSum]) :-
-    var(H)
+    var(H),
     sumRow(Player, T, NewSum, ListSum),
     Sum is 0.
 sumRow(Player, [H|T], Sum, ListSum) :-
@@ -176,28 +177,3 @@ createOneDescDiag(Board, Rank, IndexColumn, IndexToken, [Token|Rest]) :-
     NewIndexColumn is IndexColumn+1,
     NewIndexToken is IndexToken-1,
     createOneDescDiag(Board, Rank, NewIndexColumn, NewIndexToken, Rest).
-	
-    
-%%% TESTS %%%
-board([[1, 1, 1, 2, 1, _], [1, 2, 1, _, _, _], [1, 2, 2, 2, _, _], [2, 1, 1, 1, 2, 2], [2, 1, 2, 1, 2, _], [2, 2, 2, 1, 1, _], [1, _, _, _, _, _]]).
-
-%%% SOMMES DES JETONS SUR LES COLONNES
-testSumRow(Player, Sum, ListSum) :- sumRow(Player, [1, 2, 1, _, 1, 2, 1, 2, 1, 1, 2], Sum, ListSum).
-testGetColumnCostList(Player, List) :- board(Board), getColumnCostList(Board, Player, List).
-
-%%% SOMMES DES JETONS SUR LES LIGNES
-testGetRowCostList(Player, Sum) :- board(Board), getRowCostList(Board, Player, Sum).
-
-%%% CREATION DE TOUTES LES DIAGONALES INTERESSANTES
-testCreateDiag(Rank, Diag) :- board(Board), createOneDescDiag(Board, Rank, 1, Rank, Diag).
-testGetEveryDescDiagsHalfBoard(Start, ListDiags) :- board(Board), getEveryDescDiagsHalfBoard(Board, Start, ListDiags).
-testGetEveryDescDiags(ListDiags) :- board(Board), getEveryDescDiags(Board, ListDiags).
-testReverseBoard(ReversedColumnsBoard) :- board(Board), reverse(Board, ReversedBoard), reverseEveryColumns(ReversedBoard, ReversedColumnsBoard).
-
-%%% SOMMES DES JETONS SUR LES DIAGONALES
-testSumDiag(Player, Result) :- board(Board), getEveryDescDiags(Board, CompleteListDiags), sumDiag(Player, CompleteListDiags, Result).
-testGetDescDiagsCostList(Player, Sum) :- board(Board), getDescendingDiagsCostList(Board, Player, Sum).
-testGetAscDiagsCostList(Player, Sum) :- board(Board), getAscendingDiagsCostList(Board, Player, Sum).
-
-%%% HEURISTIC
-testHeuristic(Player, Cost) :- board(Board), heuristic(Board, Player, Cost).
