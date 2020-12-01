@@ -29,13 +29,12 @@ comp_best_val('min', Val1, _, Val2, Board2, Val2, Board2) :-
 changeMaximizing('max', 'min').
 changeMaximizing('min', 'max').
 
+% l'argument apres 'min' est le nombre de coups a regarder plus loin:
+% 1: regarder seulement 1 coup plus loin, etc.
 call_minmax(Board, Player, Heur, BestBoard, BestVal) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
     PossibleBoards \== [],
-    changePlayer(Player, Opponent),
-    minmax_breadth(PossibleBoards, Opponent, Heur, 'min', 3, BestBoard, BestVal),
-    writeln('Best val:'),
-    writeln(BestVal).
+    minmax_breadth(PossibleBoards, Player, Heur, 'min', 1, BestBoard, BestVal).
 
 % breadth: look at "brother" boards
 minmax_breadth([Board], Player, Heur, MaximPlayer, Depth, Board, Val) :-
@@ -43,7 +42,6 @@ minmax_breadth([Board], Player, Heur, MaximPlayer, Depth, Board, Val) :-
     minmax_depth(Board, Player, Heur, MaximPlayer, NewDepth, Val).
 
 minmax_breadth([Board1 | Tail], Player, Heur, MaximPlayer, Depth, BestBoard, BestVal) :-
-    %value_of(Board1, Player, Val1, Heur),
     NewDepth is Depth - 1,
     minmax_depth(Board1, Player, Heur, MaximPlayer, NewDepth, Val1),
     minmax_breadth(Tail, Player, Heur, MaximPlayer, Depth, Board2, Val2),
@@ -51,7 +49,7 @@ minmax_breadth([Board1 | Tail], Player, Heur, MaximPlayer, Depth, BestBoard, Bes
 
 % depth: look at "children" boards (nodes)
 minmax_depth(Board, Player, Heur, _, 0, Val) :-
-    value_of(Board, Player, Val, Heur), writeln(Val), !.
+    value_of(Board, Player, Val, Heur), !.
 
 minmax_depth(Board, Player, Heur, MaximPlayer, Depth, BestVal) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
@@ -102,13 +100,13 @@ compare_boards(_,Value1,Board2,Value2,Board2,Value2) :-
 % Utilise l heuristique pour calculer la valeur du coup (par default calcule
 % juste une valeur random)
 value_of(Board, Player, Cost, 'attack_heur_max') :-
-    heuristic_max(Board, Player, Cost).
+    heuristic_max(Board, Player, Cost), !.
     
 value_of(Board, Player, Cost, 'attack_heur_sum') :-
-    heuristic_sum(Board, Player, Cost).
+    heuristic_sum(Board, Player, Cost), !.
     
  value_of(Board, Player, Cost, 'attack_heur_alert') :-
-    heuristic_alert(Board, Player, Cost).
+    heuristic_alert(Board, Player, Cost), !.
 
 value_of(Board, Player, Cost,  'defense_heur') :-
     heuristic_def(Board, Player, Cost), !.
