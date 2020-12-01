@@ -1,8 +1,7 @@
 :- module(minmax, [find_best_next_pos/5]).
 
 :- use_module(utilities, [isColumnFull/1, updateColumn/3]).
-:- use_module(firstHeuristic, [heuristic/3]).
-:- use_module(secondHeuristic, [heuristicSecond/3]).
+:- use_module(attack_heuristics, [heuristic_max/3, heuristic_sum/3, heuristic_alert/3]).
 :- use_module(defense_heur, [heuristic_def/3]).
 
 % Usage : Passer le board actuel dans Board, il renverra un NextBoard possible
@@ -38,17 +37,20 @@ find_best_next_pos(Current,_,Value, Player, Heur) :-
   value_of(Current,Player, Value,Heur).
 
 % Utilise l'heuristique pour calculer la valeur du coup (par default calcule juste une valeur random)
-value_of(Board, Player, Cost, 'first_heur') :-
-    heuristic(Board, Player, Cost).
+value_of(Board, Player, Cost, 'attack_heur_max') :-
+    heuristic_max(Board, Player, Cost).
     
-value_of(Board, Player, Cost, 'second_heur') :-
-    heuristicSecond(Board, Player, Cost).
+value_of(Board, Player, Cost, 'attack_heur_sum') :-
+    heuristic_sum(Board, Player, Cost).
+    
+ value_of(Board, Player, Cost, 'attack_heur_alert') :-
+    heuristic_alert(Board, Player, Cost).
 
 value_of(Board, Player, Cost,  'defense_heur') :-
-  heuristic_def(Board, Player, Cost), !.
+    heuristic_def(Board, Player, Cost), !.
 
 value_of(_, _, Value,_) :-
-  Value is random(20), !.
+    Value is random(20), !.
 
 % best_of_list: d'apres la liste de tous les prochains coups possibles,
 % recuperation du meilleur coup a jouer en fonction de l'heuristique (TODO).
