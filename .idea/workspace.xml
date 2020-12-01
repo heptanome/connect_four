@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="454e7198-c61c-47cf-b349-dad3c97f48c9" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/defense_heur.pl" beforeDir="false" afterPath="$PROJECT_DIR$/defense_heur.pl" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1krgvyTesxrHpPCdNGPbAnWpv4M" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/firstHeuristic.pl" />
+    <property name="nodejs_package_manager_path" value="npm" />
+  </component>
+  <component name="RunManager" selected="Prolog.Heuristic">
+    <configuration name="FirstHeuristic" type="PrologRunConfiguration" factoryName="Prolog">
+      <setting name="targetFile" value="C:\Users\arthu\Documents\Programmation\connect_four\firstHeuristic.pl" />
+      <setting name="extraArgs" value="?- testColonneAligne(1,Y)" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Heuristic" type="PrologRunConfiguration" factoryName="Prolog">
+      <setting name="targetFile" value="C:\Users\arthu\Documents\Programmation\connect_four\firstHeuristic.pl" />
+      <setting name="extraArgs" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Prolog.FirstHeuristic" />
+      <item itemvalue="Prolog.Heuristic" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1114" y="-2063" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1606464789567">
+      <screen x="-243" y="-2160" width="2560" height="1409" />
+    </state>
+    <state x="1114" y="-2063" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1422.770/-243.-2160.2560.1409@-243.-2160.2560.1409" timestamp="1606464789567" />
+    <state x="818" y="-1714" key="FileChooserDialogImpl" timestamp="1606464776045">
+      <screen x="-243" y="-2160" width="2560" height="1409" />
+    </state>
+    <state x="818" y="-1714" key="FileChooserDialogImpl/0.0.1422.770/-243.-2160.2560.1409@-243.-2160.2560.1409" timestamp="1606464776045" />
+    <state width="2517" height="404" key="GridCell.Tab.0.bottom" timestamp="1606475484909">
+      <screen x="-243" y="-2160" width="2560" height="1409" />
+    </state>
+    <state width="2517" height="404" key="GridCell.Tab.0.bottom/0.0.1422.770/-243.-2160.2560.1409@-243.-2160.2560.1409" timestamp="1606475484909" />
+    <state width="2517" height="404" key="GridCell.Tab.0.center" timestamp="1606475484906">
+      <screen x="-243" y="-2160" width="2560" height="1409" />
+    </state>
+    <state width="2517" height="404" key="GridCell.Tab.0.center/0.0.1422.770/-243.-2160.2560.1409@-243.-2160.2560.1409" timestamp="1606475484906" />
+    <state width="2517" height="404" key="GridCell.Tab.0.left" timestamp="1606475484897">
+      <screen x="-243" y="-2160" width="2560" height="1409" />
+    </state>
+    <state width="2517" height="404" key="GridCell.Tab.0.left/0.0.1422.770/-243.-2160.2560.1409@-243.-2160.2560.1409" timestamp="1606475484897" />
+    <state width="2517" height="404" key="GridCell.Tab.0.right" timestamp="1606475484906">
+      <screen x="-243" y="-2160" width="2560" height="1409" />
+    </state>
+    <state width="2517" height="404" key="GridCell.Tab.0.right/0.0.1422.770/-243.-2160.2560.1409@-243.-2160.2560.1409" timestamp="1606475484906" />
+  </component>
+</project>

@@ -23,7 +23,28 @@ heuristic_def(Board, Player, FinalCost) :-
     S1 is MaxCostColumn,
     S2 is S1 + MaxCostRow,
     S3 is S2 + MaxCostDescDiags,
-    FinalCost is S3 + MaxCostAscDiags.
+    FinalCost is S3 + MaxCostAscDiags,
+    printAll(CostsListColumn, CostsListRow, CostsListDescDiags, CostsListAscDiags, FinalCost).
+
+
+
+    printAll(CostsListColumn, CostsListRow, CostsListDescDiags, CostsListAscDiags, FinalCost) :-
+        write('Column     : '),
+        printVal(CostsListColumn),
+        write('Row        : '),
+        printVal(CostsListRow),
+        write('Desc Diags : '),
+        printVal(CostsListDescDiags),
+        write('Asc Diags  : '),
+        printVal(CostsListAscDiags),
+        write('Final cost  : '),
+        write(FinalCost),
+        writeln(''),writeln('').
+
+    printVal([]) :-
+        writeln('').
+    printVal([H|T]) :-
+        write(H), write(' '), printVal(T).
 
 % Usage : Obtenir le nombre de jetons consécutifs alignés du joueur adverse sur chaque colonne du plateau
 %         On ne compte que les jetons  qui sont au dessus du plus haut jeton du joueur actuel
@@ -62,9 +83,17 @@ sumColumn(Player, [H|T], AlignedTokens) :-
 % - Player : numéro du joueur actuel
 % - List   : liste des sommes de jetons alignés du joueur pour chaque ligne du plateau
 getRowCostList([[],[],[],[],[],[],[]],_,[]).
+%Sans ajout de la dernière somme
 getRowCostList([[H1|R1], [H2|R2], [H3|R3], [H4|R4], [H5|R5], [H6|R6], [H7|R7]], Player, [MaxCostRow|List]) :-
     CurrentLigne = [H1, H2, H3, H4, H5, H6, H7],
-    sumRow(Player, CurrentLigne, LastSum, ListCost),
+    sumRow(Player, CurrentLigne,_,FreedomDegree, ListCost),
+    FreedomDegree > 4,
+    max_list(ListCost, MaxCostRow),
+    getRowCostList([R1,R2,R3,R4,R5,R6,R7], Player,List).
+%Avec ajout de la dernière somme
+getRowCostList([[H1|R1], [H2|R2], [H3|R3], [H4|R4], [H5|R5], [H6|R6], [H7|R7]], Player, [MaxCostRow|List]) :-
+    CurrentLigne = [H1, H2, H3, H4, H5, H6, H7],
+    sumRow(Player, CurrentLigne,LastSum,_, ListCost),
     max_list([LastSum|ListCost], MaxCostRow),
     getRowCostList([R1,R2,R3,R4,R5,R6,R7], Player,List).
 
@@ -73,22 +102,40 @@ getRowCostList([[H1|R1], [H2|R2], [H3|R3], [H4|R4], [H5|R5], [H6|R6], [H7|R7]], 
 % - Player  : numéro du joueur actuel
 % - Row     : ligne sur laquelle on calcule le nombre de jetons alignés
 % - Sum     : nombre de jetons alignés du joueur en début de ligne
+% - FreedomDegree : nombre de case vides ou contenant des jetons adverses alignées (nb cases pouvant contenir un alignement adverse)
 % - ListSum : liste des sommes des jetons alignés sur une ligne hors début de ligne
-sumRow(_, [], 0, []).
-sumRow(Player, [H|T],Sum, [NewSum| ListSum]) :-
+
+sumRow(_,[],0,0, []).
+%Cas jeton IA avec sauvegarde
+sumRow(Player, [H|T],Sum, FreedomDegree, [NewSum| ListSum]) :-
     nonvar(H),
     H = Player,
-    sumRow(Player, T, NewSum, ListSum),
+    sumRow(Player, T, NewSum, NewFreedomDegree ,  ListSum),
+    NewFreedomDegree > 4,
+    FreedomDegree is 0,
     Sum is 0.
-sumRow(Player, [H|T], Sum, ListSum) :-
+%Cas jeton IA sans sauvegarde
+sumRow(Player, [H|T],Sum, FreedomDegree, ListSum) :-
+    nonvar(H),
+    H = Player,
+    sumRow(Player, T,_,NewFreedomDegree,  ListSum), % ? sum
+    writeln(''),writeln('New Freedom Degree : '),writeln(NewFreedomDegree),writeln(''),
+    FreedomDegree is 0,
+    Sum is 0.
+%Cas jeton Adverse sans sauvegarde
+sumRow(Player, [H|T], Sum, FreedomDegree, ListSum) :-
     nonvar(H),
     H \= Player,
-    sumRow(Player, T, NewSum, ListSum),
+    sumRow(Player, T, NewSum, NewFreedomDegree, ListSum),
+    FreedomDegree is NewFreedomDegree+1,
     Sum is NewSum+1.
-sumRow(Player, [H|T], Sum, ListSum) :-
+%Cas case libre sans sauvegarde
+sumRow(Player, [H|T], Sum, FreedomDegree, ListSum) :-
     var(H),
-    sumRow(Player, T, NewSum, ListSum),
+    sumRow(Player, T, NewSum, NewFreedomDegree, ListSum),
+    FreedomDegree is NewFreedomDegree+1,
     Sum is NewSum.
+
 
 
 % Usage : Obtenir le nombre de jetons du joueur adverse alignés sans blocage du joueur
@@ -116,8 +163,15 @@ getDescendingDiagsCostList(Board, Player, List) :-
     sumDiag(Player, CompleteListDiags, List).
 
 sumDiag(_, [], []).
+%Sans ajout de la dernière somme
 sumDiag(Player, [Diag|Rest], [MaxCostDiag|ListSum]) :-
-    sumRow(Player, Diag, LastSum, ListCost),
+    sumRow(Player, Diag,_,FreedomDegree, ListCost),
+    FreedomDegree > 4,
+    max_list(ListCost, MaxCostDiag),
+    sumDiag(Player, Rest, ListSum).
+%Avec ajout de la dernière somme
+sumDiag(Player, [Diag|Rest], [MaxCostDiag|ListSum]) :-
+    sumRow(Player, Diag,LastSum,_, ListCost),
     max_list([LastSum|ListCost], MaxCostDiag),
     sumDiag(Player, Rest, ListSum).
 
@@ -128,7 +182,7 @@ board2([['1', '2', _, _, _, _], [_, _, _, _, _, _], [_, _, _, _, _, _], [_, _, _
 
 
 %%% SOMMES DES JETONS SUR LES COLONNES
-testSumRow(Player, Sum, ListSum) :- sumRow(Player, [1, 2, 1, _, 1, 2, 1, 2, 1, 1, 2], Sum, ListSum).
+testSumRow(Player, Sum, ListSum) :- sumRow(Player, [1, 2, 1, _, 1, 2, 1, 2, 1, 1, 2], Sum,_, ListSum).
 testGetColumnCostList(Player, List) :- board2(Board), getColumnCostList(Board, Player, List).
 
 %%% SOMMES DES JETONS SUR LES LIGNES
