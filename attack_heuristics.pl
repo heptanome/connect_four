@@ -44,7 +44,7 @@ heuristic_sum(Board, Player, FinalCost) :-
 % Usage : Obtenir le coût de la dispotion actuelle du plateau en
 %         cherchant la somme du nombre max de jetons alignés sur une ligne, une colonne,
 %         une diagonale ascendante et descendante du plateau.
-%         Si 4 jetons sont alignés, cette disposition est favorisée.
+%         Si 4 jetons ou plus sont alignés, cette disposition est favorisée.
 % heuristic_alert(+Board, +Player, -FinalCost) :
 % - Board     : état du plateau après avoir joué le coup
 % - Player    : numéro du joueur actuel
