@@ -3,6 +3,7 @@
 :- use_module(utilities, [isColumnFull/1, updateColumn/3]).
 :- use_module(firstHeuristic, [heuristic/3]).
 :- use_module(secondHeuristic, [heuristicSecond/3]).
+:- use_module(defense_heur, [heuristic_def/3]).
 
 % Usage : Passer le board actuel dans Board, il renverra un NextBoard possible
 %         dans la variable NextBoard. Si IndexColonne n'est pas specifie, il renverra
@@ -42,6 +43,9 @@ value_of(Board, Player, Cost, 'first_heur') :-
     
 value_of(Board, Player, Cost, 'second_heur') :-
     heuristicSecond(Board, Player, Cost).
+
+value_of(Board, Player, Cost,  'defense_heur') :-
+  heuristic_def(Board, Player, Cost), !.
 
 value_of(_, _, Value,_) :-
   Value is random(20), !.
