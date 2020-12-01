@@ -117,6 +117,7 @@ value_of(_, _, Value, _) :-
 % Player: soit '1', soit '2'
 % Heur : l'heuristique à utiliser
 
+/*
 best_of_list([Board], Board, Value, Player, Heur) :-
   value_of(Board,Player,Value, Heur).
 
@@ -125,4 +126,4 @@ best_of_list([Board1 | EndList],BestBoard, BestVal, Player, Heur) :-
   value_of(Board1, Player, Val1, Heur),
   best_of_list(EndList,Board2,Val2, Player, Heur),
   compare(Board1,Val1,Board2,Val2,BestBoard,BestVal).
-
+*/
