@@ -13,13 +13,17 @@
 heuristic_def(Board, Player, FinalCost) :-
     nonvar(Player),
     getColumnCostList(Board, Player, CostsListColumn),
-    max_list(CostsListColumn, MaxCostColumn),
+    FilledColumnCostList = [0|CostsListColumn],
+    max_list(FilledColumnCostList, MaxCostColumn),
     getRowCostList(Board, Player, CostsListRow),
-    max_list(CostsListRow, MaxCostRow),
+    FilledRowCostList = [0|CostsListRow],
+    max_list(FilledRowCostList, MaxCostRow),
     getDescendingDiagsCostList(Board, Player, CostsListDescDiags),
-    max_list(CostsListDescDiags, MaxCostDescDiags),
+    FilledDDiagCostList = [0|CostsListDesc],
+    max_list(FilledDDiagCostList, MaxCostDescDiags),
     getAscendingDiagsCostList(Board, Player, CostsListAscDiags),
-    max_list(CostsListAscDiags, MaxCostAscDiags),
+    FilledADiagCostList = [0|CostsListAscDiags],
+    max_list(FilledADiagCostList, MaxCostAscDiags),
     S1 is MaxCostColumn,
     S2 is S1 + MaxCostRow,
     S3 is S2 + MaxCostDescDiags,
@@ -86,55 +90,65 @@ getRowCostList([[],[],[],[],[],[],[]],_,[]).
 %Sans ajout de la dernière somme
 getRowCostList([[H1|R1], [H2|R2], [H3|R3], [H4|R4], [H5|R5], [H6|R6], [H7|R7]], Player, [MaxCostRow|List]) :-
     CurrentLigne = [H1, H2, H3, H4, H5, H6, H7],
-    sumRow(Player, CurrentLigne,_,FreedomDegree, ListCost),
-    FreedomDegree > 4,
-    max_list(ListCost, MaxCostRow),
+    sumRow(Player, CurrentLigne,_,LastSum,FreedomDegree, ListCost),
+    FreedomDegree >= 4,
+    FilledRowCostList = [0|ListCost],
+    max_list([LastSum|FilledRowCostList], MaxCostRow),
     getRowCostList([R1,R2,R3,R4,R5,R6,R7], Player,List).
 %Avec ajout de la dernière somme
 getRowCostList([[H1|R1], [H2|R2], [H3|R3], [H4|R4], [H5|R5], [H6|R6], [H7|R7]], Player, [MaxCostRow|List]) :-
     CurrentLigne = [H1, H2, H3, H4, H5, H6, H7],
-    sumRow(Player, CurrentLigne,LastSum,_, ListCost),
-    max_list([LastSum|ListCost], MaxCostRow),
+    sumRow(Player, CurrentLigne,_,_,_, ListCost),
+    FilledRowCostList = [0|ListCost],
+    max_list(FilledRowCostList, MaxCostRow),
     getRowCostList([R1,R2,R3,R4,R5,R6,R7], Player,List).
 
 % Usage : Compter le nombre de jetons  du joueur adverse alignés sans blocage sur une ligne
 % sumRow(+Player, +Row, -Sum, -ListSum) :
 % - Player  : numéro du joueur actuel
 % - Row     : ligne sur laquelle on calcule le nombre de jetons alignés
-% - Sum     : nombre de jetons alignés du joueur en début de ligne
+% - Sum     : nombre max de jetons alignés du joueur sur une ligne délimité par les jetons du joueur adverse ou des bodures.
+%               ex : [1,_,1,1,2,1,1] -> Sum = 2; [1,_,1,_,2,1,1] -> Sum = 2; [1,_,1,_,1,1,1] -> Sum = 3
+% - Sum2 : variable permettant à Sum de récupérer le max entre lui même et une autre variable
+% - TransitionalSum     : nombre de jetons alignés du joueur sur une ligne délimité par les jetons du joueur adverse, des bodures ou une case vide.
+%               A chaque réinitialisation de TransitionalSum, Sum prend sa valeur si TransitionalSum est plus grande.
+%               ex : [1,1,_,...] -> TransitionalSum = 2; [1,_,...] -> TransitionalSum = 1; [_,_,1,1,1,2] -> TransitionalSum = 3
 % - FreedomDegree : nombre de case vides ou contenant des jetons adverses alignées (nb cases pouvant contenir un alignement adverse)
 % - ListSum : liste des sommes des jetons alignés sur une ligne hors début de ligne
 
-sumRow(_,[],0,0, []).
+sumRow(_,[],0,0,0, []).
 %Cas jeton IA avec sauvegarde
-sumRow(Player, [H|T],Sum, FreedomDegree, [NewSum| ListSum]) :-
+sumRow(Player, [H|T],TransitionalSum, Sum, FreedomDegree, [Sum2| ListSum]) :-
     nonvar(H),
-    H = Player,
-    sumRow(Player, T, NewSum, NewFreedomDegree ,  ListSum),
-    NewFreedomDegree > 4,
+    H == Player,
+    sumRow(Player,T, NewTransitionalSum, NewSum, NewFreedomDegree ,  ListSum),
+    NewFreedomDegree >= 4,
     FreedomDegree is 0,
-    Sum is 0.
+    max_list([NewSum,NewTransitionalSum],Sum2),
+    Sum is 0,
+    TransitionalSum is 0.
 %Cas jeton IA sans sauvegarde
-sumRow(Player, [H|T],Sum, FreedomDegree, ListSum) :-
+sumRow(Player, [H|T], TransitionalSum, Sum, FreedomDegree, ListSum) :-
     nonvar(H),
-    H = Player,
-    sumRow(Player, T,_,NewFreedomDegree,  ListSum), % ? sum
-    writeln(''),writeln('New Freedom Degree : '),writeln(NewFreedomDegree),writeln(''),
+    H == Player,
+    sumRow(Player,T,_,_,_,ListSum),
     FreedomDegree is 0,
-    Sum is 0.
-%Cas jeton Adverse sans sauvegarde
-sumRow(Player, [H|T], Sum, FreedomDegree, ListSum) :-
+    Sum is 0,
+    TransitionalSum is 0.
+%Cas jeton player sans sauvegarde
+sumRow(Player, [H|T], TransitionalSum, NewSum, FreedomDegree, ListSum) :-
     nonvar(H),
     H \= Player,
-    sumRow(Player, T, NewSum, NewFreedomDegree, ListSum),
+    sumRow(Player,T, NewTransitionalSum, NewSum, NewFreedomDegree, ListSum),
     FreedomDegree is NewFreedomDegree+1,
-    Sum is NewSum+1.
+    TransitionalSum is NewTransitionalSum+1.
 %Cas case libre sans sauvegarde
-sumRow(Player, [H|T], Sum, FreedomDegree, ListSum) :-
+sumRow(Player, [H|T], TransitionalSum, Sum, FreedomDegree, ListSum) :-
     var(H),
-    sumRow(Player, T, NewSum, NewFreedomDegree, ListSum),
+    sumRow(Player,T,NewTransitionalSum, NewSum, NewFreedomDegree, ListSum),
     FreedomDegree is NewFreedomDegree+1,
-    Sum is NewSum.
+    max_list([NewSum,NewTransitionalSum],Sum),
+    TransitionalSum is 0.
 
 
 
@@ -165,14 +179,16 @@ getDescendingDiagsCostList(Board, Player, List) :-
 sumDiag(_, [], []).
 %Sans ajout de la dernière somme
 sumDiag(Player, [Diag|Rest], [MaxCostDiag|ListSum]) :-
-    sumRow(Player, Diag,_,FreedomDegree, ListCost),
-    FreedomDegree > 4,
-    max_list(ListCost, MaxCostDiag),
+    sumRow(Player, Diag,_,_,FreedomDegree, ListCost),
+    FreedomDegree >= 4,
+    FilledDiagCostList = [0|ListCost],
+    max_list(FilledDiagCostList, MaxCostDiag),
     sumDiag(Player, Rest, ListSum).
 %Avec ajout de la dernière somme
 sumDiag(Player, [Diag|Rest], [MaxCostDiag|ListSum]) :-
-    sumRow(Player, Diag,LastSum,_, ListCost),
-    max_list([LastSum|ListCost], MaxCostDiag),
+    sumRow(Player, Diag, _,LastSum,_, ListCost),
+    FilledDiagCostList = [0|ListCost],
+    max_list([LastSum|FilledDiagCostList], MaxCostDiag),
     sumDiag(Player, Rest, ListSum).
 
 
@@ -182,7 +198,8 @@ board2([['1', '2', _, _, _, _], [_, _, _, _, _, _], [_, _, _, _, _, _], [_, _, _
 
 
 %%% SOMMES DES JETONS SUR LES COLONNES
-testSumRow(Player, Sum, ListSum) :- sumRow(Player, [1, 2, 1, _, 1, 2, 1, 2, 1, 1, 2], Sum,_, ListSum).
+testSumRow(Player, Sum, ListSum) :- sumRow(Player, [1, 2, 1, _, 1, 2, 1, 2, 1, 1, 2],_,Sum,_, ListSum).
+testSumRow2(Player, Sum, ListSum) :- sumRow(Player, [2,1, 1, _,1, 2,_,_,1],_, Sum,_, ListSum).
 testGetColumnCostList(Player, List) :- board2(Board), getColumnCostList(Board, Player, List).
 
 %%% SOMMES DES JETONS SUR LES LIGNES

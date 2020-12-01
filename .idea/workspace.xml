@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="454e7198-c61c-47cf-b349-dad3c97f48c9" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/defense_heur.pl" beforeDir="false" afterPath="$PROJECT_DIR$/defense_heur.pl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -67,5 +68,9 @@
       <screen x="-243" y="-2160" width="2560" height="1409" />
     </state>
     <state width="2517" height="404" key="GridCell.Tab.0.right/0.0.1422.770/-243.-2160.2560.1409@-243.-2160.2560.1409" timestamp="1606475484906" />
+    <state width="498" height="446" key="SwitcherDM" timestamp="1606853388750">
+      <screen x="0" y="0" width="1422" height="770" />
+    </state>
+    <state width="498" height="446" key="SwitcherDM/0.0.1422.770@0.0.1422.770" timestamp="1606853388750" />
   </component>
 </project>
