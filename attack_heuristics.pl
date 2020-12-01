@@ -59,7 +59,6 @@ heuristic_alert(Board, Player, FinalCost) :-
     help_heuristic_alert(CostsListDescDiags, MaxCostDescDiags),
     getAscendingDiagsCostList(Board, Player, CostsListAscDiags),
     help_heuristic_alert(CostsListAscDiags, MaxCostAscDiags),
-    printVal([MaxCostColumns, MaxCostRows, MaxCostDescDiags, MaxCostAscDiags]),
     Max is MaxCostColumns + MaxCostRows + MaxCostDescDiags + MaxCostAscDiags,
     FinalCost is -Max.  
     
