@@ -32,23 +32,36 @@ comp_best_val('min', Val1, _, Val2, Board2, Val2, Board2) :-
 changeMaximizing('max', 'min').
 changeMaximizing('min', 'max').
 
-% l'argument apres 'min' est le nombre de coups a regarder plus loin:
-% 1: regarder seulement 1 coup plus loin, etc.
+% predicat utilise par connect_four qui appelle le minmax recursif avec les bons
+% parametres (l'heuristique, le fait qu'on cherche a maximiser les points et
+% la profondeur de recherche (apres le 'max'). Le meilleur tableaux est stocke
+% dans BestBoard
 call_minmax(Board, Player, Heur, BestBoard, BestVal) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
     changePlayer(Player, Opponent),
     minmax(PossibleBoards, Heur, Opponent, 'max', 3, BestVal, BestBoard).
 
+% MINMAX: cherche a partir d'une liste de tableaux ses enfants en placant
+% les pions du joueur et de l'ennemi chacun son tour puis en trouvant le
+% meilleur a renvoyer en utilisant l'algorithme de minmax
+% https://en.wikipedia.org/wiki/Minimax
+
+% le cas ou on arrive au bout de la recursion (vis a vis de la profondeur)
+% et ou il ne reste qu'un tableau a tester
 minmax([Board], Heur, Player, _, 0, Val, _) :- 
     changePlayer(Player, Opponent),
     value_of(Board, Opponent, Val, Heur), !.
 
+% le cas ou on arrive au bout de la recursion mais il reste plus d'un tableaux
+% a tester
 minmax([Board1|Tail], Heur, Player, MaximPlayer, 0, BestVal, BestBoard) :- 
     changePlayer(Player, Opponent),
     value_of(Board1, Opponent, Val1, Heur),
     minmax(Tail, Heur, Player, MaximPlayer, 0, Val2, Board2),
     comp_best_val(MaximPlayer, Val1, Board1, Val2, Board2, BestVal, BestBoard), !.
 
+% le cas ou la recursion n'est pas arrivee a son terme et ou la liste a plus
+% d'un element
 minmax([Board1|Tail], Heur, Player, MaximPlayer, Depth, BestVal, BestBoard) :-
     findall(NextBoard, possible_move(Board1, NextBoard, Player), PossibleBoards),
     changePlayer(Player, Opponent),
@@ -58,6 +71,8 @@ minmax([Board1|Tail], Heur, Player, MaximPlayer, Depth, BestVal, BestBoard) :-
     minmax(Tail, Heur, Player, MaximPlayer, Depth, Val2, Board2),
     comp_best_val(MaximPlayer, Val1, Board1, Val2, Board2, BestVal, BestBoard), !.
 
+% le cas ou la recursion n'est pas arrivee a son terme et ou la liste ne
+% contient plus qu'un element
 minmax([Board], Heur, Player, MaximPlayer, Depth, Val, Board) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
     changePlayer(Player, Opponent),
@@ -85,6 +100,7 @@ value_of(Board, Player, Cost,  'full_sum') :-
 value_of(Board, Player, Cost,  'full_alert') :-
     heuristic_fAlert(Board, Player, Cost).
 
+% si l'heuristique n'est pas reconnue, on prend une valeur aleatoire
 value_of(_, _, Value, _) :-
     Value is random(20), !.
 

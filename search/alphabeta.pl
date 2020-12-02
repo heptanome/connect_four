@@ -33,28 +33,34 @@ comp_best_val('min', Val1, _, Val2, Board2, Val2, Board2) :-
 changeMaximizing('max', 'min').
 changeMaximizing('min', 'max').
 
-% l'argument apres 'min' est le nombre de coups a regarder plus loin:
-% 1: regarder seulement 1 coup plus loin, etc.
 call_alphabeta(Board, Player, Heur, BestBoard, BestVal) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
     changePlayer(Player, Opponent),
     alphabeta(PossibleBoards, Heur, Opponent, 'max', 3,
               BestVal, BestBoard, -9999, 9999).
 
+% specific to ALPHABETA, used to store the biggest A when branching
 pruning('max', A, B, Val, Val, B) :-
-    %writeln('max' + A + ' ' + B + ' ' + Val),
-    Val > A, !.
+    Val > A.
 
+% same principle
 pruning('min', A, B, Val, A, Val) :-
-    %writeln('min' + A + ' ' + B + ' ' + Val),
-    Val < B, !.
+    Val < B.
 
 pruning(_, A, B, _, A, B).
 
+% ALPHABETA: works on the same principle as MINMAX excepts it will not 'branch
+% in' in boards doomed to get an uninteresting score by storing the highest
+% minimum and lowest maximum in A and B.
+
+% le cas ou on arrive au bout de la recursion (vis a vis de la profondeur)
+% et ou il ne reste qu'un tableau a tester
 alphabeta([Board], Heur, Player, _, 0, Val, _, _, _) :- 
     changePlayer(Player, Opponent),
     value_of(Board, Opponent, Val, Heur), !.
 
+% le cas ou on arrive au bout de la recursion mais il reste plus d'un tableaux
+% a tester
 alphabeta([Board1|Tail], Heur, Player, MaximPlayer, 0,
           BestVal, BestBoard, A, B) :- 
     changePlayer(Player, Opponent),
@@ -62,6 +68,8 @@ alphabeta([Board1|Tail], Heur, Player, MaximPlayer, 0,
     alphabeta(Tail, Heur, Player, MaximPlayer, 0, Val2, Board2, A, B),
     comp_best_val(MaximPlayer, Val1, Board1, Val2, Board2, BestVal, BestBoard), !.
 
+% le cas ou la recursion n'est pas arrivee a son terme et ou la liste ne
+% contient plus qu'un element
 alphabeta([Board], Heur, Player, MaximPlayer, Depth, Val, Board, A, B) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
     changePlayer(Player, Opponent),
@@ -70,6 +78,8 @@ alphabeta([Board], Heur, Player, MaximPlayer, Depth, Val, Board, A, B) :-
     alphabeta(PossibleBoards, Heur, Opponent, MaximOppon, NewDepth, Val, _, A, B),
     pruning(MaximPlayer, A, B, Val, _, _), !.
 
+% le cas ou la recursion n'est pas arrivee a son terme et ou la liste a plus
+% d'un element
 alphabeta([Board1|Tail], Heur, Player, MaximPlayer, Depth,
           BestVal, BestBoard, A, B) :-
     findall(NextBoard, possible_move(Board1, NextBoard, Player), PossibleBoards),
