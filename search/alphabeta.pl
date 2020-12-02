@@ -12,11 +12,11 @@
 %         dans la variable NextBoard. Si IndexColonne n est pas specifie, il
 %         renverra tous les moves possibles atteignables
 possible_move(Board, NextBoard, Player) :-
-  Board=NextBoard,
-  nth1(IndexColumn, Board, Column),
-  not(isColumnFull(Column)),
-  updateColumn(Column, NewColumn, Player),
-  nth1(IndexColumn, NextBoard, NewColumn).
+    Board=NextBoard,
+    nth1(IndexColumn, Board, Column),
+    not(isColumnFull(Column)),
+    updateColumn(Column, NewColumn, Player),
+    nth1(IndexColumn, NextBoard, NewColumn).
 
 comp_best_val('max', Val1, Board1, Val2, _, Val1, Board1) :-
     Val1 >= Val2.

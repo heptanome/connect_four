@@ -1,11 +1,15 @@
-:- module(heuristics, [heuristic_max/3, heuristic_aSum/3, heuristic_alert/4, heuristic_fSum/3, heuristic_dSum/3, heuristic_fAlert/3]).
+:- module(heuristics, [heuristic_max/3, heuristic_aSum/3, heuristic_alert/4,
+                      heuristic_fSum/3, heuristic_dSum/3, heuristic_fAlert/3]).
 
 :- use_module(utils/utilities, [changePlayer/2]).
-:- use_module(utils/utilities_heur, [getColumnCostList/3, getRowCostList/3, getAscendingDiagsCostList/3, getDescendingDiagsCostList/3]).
+:- use_module(utils/utilities_heur, [getColumnCostList/3, getRowCostList/3,
+                                    getAscendingDiagsCostList/3,
+                                    getDescendingDiagsCostList/3]).
 
 % Usage : Obtenir le coût de la dispotion actuelle du plateau en
-%         cherchant le nombre maximum de jetons alignés du joueur actuel sur le plateau.
-%         Ces jetons peuvent être aligné sur une ligne, une colonne ou une diagonale.
+%         cherchant le nombre maximum de jetons alignés du joueur actuel sur le
+%         plateau. Ces jetons peuvent être aligné sur une ligne, une colonne ou
+%         une diagonale.
 % heuristic_max(+Board, +Player, -FinalCost) :
 % - Board     : état du plateau après avoir joué le coup
 % - Player    : numéro du joueur actuel
@@ -23,8 +27,9 @@ heuristic_max(Board, Player, FinalCost) :-
     printAll(CostsListColumn, CostsListRow, CostsListDescDiags, CostsListAscDiags),
     FinalCost is -max(MaxCostColumn, max(MaxCostRow, max(MaxCostDescDiags, MaxCostAscDiags))).
     
-% Usage : Obtenir le coût de la dispotion actuelle du plateau en sommant le nombre de jetons
-%         alignés sur une ligne, une colonne, une diagonale ascendante et descendante du plateau.
+% Usage : Obtenir le coût de la dispotion actuelle du plateau en sommant le
+%         nombre de jetons alignés sur une ligne, une colonne, une diagonale
+%         ascendante et descendante du plateau.
 % heuristic_aSum(+Board, +Player, -FinalCost) :
 % - Board     : état du plateau après avoir joué le coup
 % - Player    : numéro du joueur actuel
@@ -55,8 +60,8 @@ heuristic_fSum(Board, Player, FinalCost) :-
     FinalCost is CostPlayer+CostOpponent.
 
 % Usage : Obtenir le coût de la dispotion actuelle du plateau en
-%         cherchant la somme du nombre max de jetons alignés sur une ligne, une colonne,
-%         une diagonale ascendante et descendante du plateau.
+%         cherchant la somme du nombre max de jetons alignés sur une ligne, une
+%         colonne, une diagonale ascendante et descendante du plateau.
 %         Si 4 jetons ou plus sont alignés, cette disposition est favorisée.
 % heuristic_alert(+Board, +Player, -FinalCost) :
 % - Board     : état du plateau après avoir joué le coup
@@ -65,9 +70,9 @@ heuristic_fSum(Board, Player, FinalCost) :-
 heuristic_alert(Board, Player, FinalCost, Number) :-
     nonvar(Player),
     getColumnCostList(Board, Player, CostsListColumn),
-	help_heuristic_alert(CostsListColumn, MaxCostColumns, Number),
+	  help_heuristic_alert(CostsListColumn, MaxCostColumns, Number),
     getRowCostList(Board, Player, CostsListRow),
-	help_heuristic_alert(CostsListRow, MaxCostRows, Number),
+	  help_heuristic_alert(CostsListRow, MaxCostRows, Number),
     getDescendingDiagsCostList(Board, Player, CostsListDescDiags),
     help_heuristic_alert(CostsListDescDiags, MaxCostDescDiags, Number),
     getAscendingDiagsCostList(Board, Player, CostsListAscDiags),
