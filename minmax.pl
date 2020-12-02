@@ -1,8 +1,9 @@
 :- module(minmax, [call_minmax/5]).
 
+
+:- use_module(heuristics, [heuristic_max/3, heuristic_aSum/3, heuristic_dSum/3, heuristic_fSum/3, heuristic_alert/4, heuristic_fAlert/3]).
 :- use_module(utilities, [changePlayer/2, isColumnFull/1, updateColumn/3]).
-:- use_module(attack_heuristics, [heuristic_max/3, heuristic_sum/3, heuristic_alert/3]).
-:- use_module(defense_heur, [heuristic_def/3]).
+
 
 % Usage : Passer le board actuel dans Board, il renverra un NextBoard possible
 %         dans la variable NextBoard. Si IndexColonne n est pas specifie, il
@@ -15,10 +16,10 @@ possible_move(Board, NextBoard, Player) :-
   nth1(IndexColumn, NextBoard, NewColumn).
 
 comp_best_val('max', Val1, Board1, Val2, _, Val1, Board1) :-
-    Val1 > Val2.
+    Val1 >= Val2.
 
 comp_best_val('max', Val1, _, Val2, Board2, Val2, Board2) :-
-    Val1 =< Val2.
+    Val1 < Val2.
 
 comp_best_val('min', Val1, Board1, Val2, _, Val1, Board1) :-
     Val1 =< Val2.
@@ -37,18 +38,20 @@ call_minmax(Board, Player, Heur, BestBoard, BestVal) :-
     minmax(PossibleBoards, Heur, Opponent, 'min', 0, BestVal, BestBoard),
     writeln("Bestval: " + BestVal).
 
-minmax([Board], Heur, Player, _, 0, Val, _) :- 
+minmax([Board], Heur, Player, MaximPlayer, 0, Val, _) :- 
     changePlayer(Player, Opponent),
-    value_of(Board, Opponent, Val, Heur), !.
+    value_of(Board, Opponent, Val, Heur),
+    writeln(MaximPlayer + ' '+ Player  + ' ' + Val),
+!.
 
 minmax([Board1|Tail], Heur, Player, MaximPlayer, 0, BestVal, BestBoard) :- 
     changePlayer(Player, Opponent),
     value_of(Board1, Opponent, Val1, Heur),
+    writeln(MaximPlayer + ' ' + Player  + ' ' + Val1),
     minmax(Tail, Heur, Player, MaximPlayer, 0, Val2, Board2),
     comp_best_val(MaximPlayer, Val1, Board1, Val2, Board2, BestVal, BestBoard), !.
 
 minmax([Board1|Tail], Heur, Player, MaximPlayer, Depth, BestVal, BestBoard) :-
-    write(Board1),
     findall(NextBoard, possible_move(Board1, NextBoard, Player), PossibleBoards),
     changePlayer(Player, Opponent),
     NewDepth is Depth - 1,
@@ -63,12 +66,11 @@ minmax([Board], Heur, Player, MaximPlayer, Depth, Val, Board) :-
     NewDepth is Depth - 1,
     changeMaximizing(MaximPlayer, MaximOppon),
     minmax(PossibleBoards, Heur, Opponent, MaximOppon, NewDepth, Val, _).
-
+/*
 call_minmax2(Board, Player, Heur, BestBoard, BestVal) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
     changePlayer(Player, Opponent),
-    minmax_breadth(PossibleBoards, Opponent, Heur, 'min', 3, BestBoard, BestVal),
-    write('Bestval: '), writeln(BestVal).
+    minmax_breadth(PossibleBoards, Opponent, Heur, 'max', 2, BestBoard, BestVal).
 
 % breadth: look at "brother" boards
 minmax_breadth([Board], Player, Heur, MaximPlayer, Depth, Board, Val) :-
@@ -85,7 +87,7 @@ minmax_breadth([Board1 | Tail], Player, Heur, MaximPlayer, Depth, BestBoard, Bes
 % depth: look at "children" boards (nodes)
 minmax_depth(Board, Player, Heur, _, 0, Val) :-
     changePlayer(Player, Opponent),
-    value_of(Board, Opponent, Val, Heur), writeln(Val), !.
+    value_of(Board, Opponent, Val, Heur), !.
 
 minmax_depth(Board, Player, Heur, MaximPlayer, Depth, BestVal) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
@@ -96,22 +98,27 @@ minmax_depth(Board, Player, Heur, MaximPlayer, Depth, BestVal) :-
 
 minmax_depth(Board, Player, Heur, _, _, Val) :-
     changePlayer(Player, Opponent),
-    value_of(Board, Opponent, Val, Heur), writeln(Val), !.
-
+    value_of(Board, Opponent, Val, Heur), !.
+*/
 % Utilise l heuristique pour calculer la valeur du coup (par default calcule
 % juste une valeur random)
-value_of(Board, Player, Cost, 'attack_heur_max') :-
-    heuristic_max(Board, Player, Cost), writeln(Cost).
+value_of(Board, Player, Cost, 'attack_max') :-
+    heuristic_max(Board, Player, Cost).
     
-value_of(Board, Player, Cost, 'attack_heur_sum') :-
-    heuristic_sum(Board, Player, Cost).
+value_of(Board, Player, Cost, 'attack_sum') :-
+    heuristic_aSum(Board, Player, Cost).
     
- value_of(Board, Player, Cost, 'attack_heur_alert') :-
-    heuristic_alert(Board, Player, Cost),
-    writeln(Cost + " " + Player).
+ value_of(Board, Player, Cost, 'attack_alert') :-
+    heuristic_alert(Board, Player, Cost, 4).
+    
+value_of(Board, Player, Cost,  'defense_sum') :-
+    heuristic_dSum(Board, Player, Cost).
 
-value_of(Board, Player, Cost,  'defense_heur') :-
-    heuristic_def(Board, Player, Cost), !.
+value_of(Board, Player, Cost,  'full_sum') :-
+    heuristic_fSum(Board, Player, Cost).
+    
+value_of(Board, Player, Cost,  'full_alert') :-
+    heuristic_fAlert(Board, Player, Cost).
 
 value_of(_, _, Value, _) :-
     Value is random(20), !.
