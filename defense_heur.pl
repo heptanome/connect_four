@@ -19,7 +19,7 @@ heuristic_def(Board, Player, FinalCost) :-
     FilledRowCostList = [0|CostsListRow],
     max_list(FilledRowCostList, MaxCostRow),
     getDescendingDiagsCostList(Board, Player, CostsListDescDiags),
-    FilledDDiagCostList = [0|CostsListDesc],
+    FilledDDiagCostList = [0|CostsListDescDiags],
     max_list(FilledDDiagCostList, MaxCostDescDiags),
     getAscendingDiagsCostList(Board, Player, CostsListAscDiags),
     FilledADiagCostList = [0|CostsListAscDiags],
