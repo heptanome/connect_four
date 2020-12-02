@@ -1,5 +1,4 @@
-:- module(utilities_heuristics, [getEveryDescDiags/2, reverseEveryColumns/2, 
-    getEveryDescDiagsHalfBoard/3, createOneDescDiag/5]).
+:- module(diagonals, [getEveryDescDiags/2, getEveryDescDiagsHalfBoard/3, createOneDescDiag/5]).
 
 % Usage : Créer une liste des diagonales descendantes N°4 à 9.
 % getEveryDescDiags(+Board, -CompleteListDiags)

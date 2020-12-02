@@ -1,10 +1,9 @@
 :- module(minmax, [call_minmax/5]).
 
 
-:- use_module(attack_heuristics, [heuristic_max/3, heuristic_aSum/3, heuristic_dSum/3, heuristic_fSum/3, heuristic_alert/4, heuristic_fAlert/3]).
+:- use_module(heuristics, [heuristic_max/3, heuristic_aSum/3, heuristic_dSum/3, heuristic_fSum/3, heuristic_alert/4, heuristic_fAlert/3]).
 :- use_module(utilities, [changePlayer/2, isColumnFull/1, updateColumn/3]).
 
-:- use_module(defense_heur, [heuristic_def/3]).
 
 % Usage : Passer le board actuel dans Board, il renverra un NextBoard possible
 %         dans la variable NextBoard. Si IndexColonne n est pas specifie, il
@@ -148,11 +147,7 @@ value_of(Board, Player, Cost, 'attack_sum') :-
     heuristic_aSum(Board, Player, Cost).
     
  value_of(Board, Player, Cost, 'attack_alert') :-
-    heuristic_alert(Board, Player, Cost, 4),
-    writeln(Cost + " " + Player).
-
-value_of(Board, Player, Cost,  'defense_heur') :-
-    heuristic_def(Board, Player, Cost).
+    heuristic_alert(Board, Player, Cost, 4).
     
 value_of(Board, Player, Cost,  'defense_sum') :-
     heuristic_dSum(Board, Player, Cost).

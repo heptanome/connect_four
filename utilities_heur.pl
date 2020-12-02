@@ -1,8 +1,7 @@
-:- module(utilities_attack_heur, [getColumnCostList/3, getRowCostList/3,
+:- module(utilities_heur, [getColumnCostList/3, getRowCostList/3,
     getAscendingDiagsCostList/3, getDescendingDiagsCostList/3]).
 
-:- use_module(utilities_heuristics, [getEveryDescDiags/2, reverseEveryColumns/2, 
-    getEveryDescDiagsHalfBoard/3, createOneDescDiag/5]).
+:- use_module(diagonals, [getEveryDescDiags/2, getEveryDescDiagsHalfBoard/3, createOneDescDiag/5]).
 
 % Usage : Obtenir le nombre de jetons consécutifs alignés du joueur actuel sur chaque colonne du plateau
 %         On ne compte que les jetons du joueur qui sont au dessus du plus haut jeton du joueur opposé

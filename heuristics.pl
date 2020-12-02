@@ -1,8 +1,8 @@
-:- module(attack_heuristics, [heuristic_max/3, heuristic_aSum/3, heuristic_alert/4, heuristic_fSum/3, heuristic_dSum/3, heuristic_fAlert/3]).
+:- module(heuristics, [heuristic_max/3, heuristic_aSum/3, heuristic_alert/4, heuristic_fSum/3, heuristic_dSum/3, heuristic_fAlert/3]).
 
 :- use_module(displayBoard, [displayBoard/1]).
 :- use_module(utilities, [changePlayer/2]).
-:- use_module(utilities_attack_heur, [getColumnCostList/3, getRowCostList/3, getAscendingDiagsCostList/3, getDescendingDiagsCostList/3]).
+:- use_module(utilities_heur, [getColumnCostList/3, getRowCostList/3, getAscendingDiagsCostList/3, getDescendingDiagsCostList/3]).
 
 % Usage : Obtenir le coût de la dispotion actuelle du plateau en
 %         cherchant le nombre maximum de jetons alignés du joueur actuel sur le plateau.
