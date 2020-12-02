@@ -1,9 +1,9 @@
 :- dynamic board/1.
 
-:- use_module(displayBoard, [displayBoard/1]).
-:- use_module(winner, [winner/2]).
-:- use_module(minmax, [call_minmax/5]).
-:- use_module(utilities, [changePlayer/2, isColumnFull/1, updateColumn/3]).
+:- use_module(utils/displayBoard, [displayBoard/1]).
+:- use_module(utils/winner, [winner/2]).
+:- use_module(search/minmax, [call_minmax/5]).
+:- use_module(utils/utilities, [changePlayer/2, isColumnFull/1, updateColumn/3]).
 
 % Usage : Regarder si le jeu est fini
 gameover(Winner) :- board(Board), winner(Board, Winner), !.
