@@ -52,6 +52,7 @@ pruning(_, A, B, _, A, B).
 % ALPHABETA: works on the same principle as MINMAX excepts it will not 'branch
 % in' in boards doomed to get an uninteresting score by storing the highest
 % minimum and lowest maximum in A and B.
+% https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
 
 % le cas ou on arrive au bout de la recursion (vis a vis de la profondeur)
 % et ou il ne reste qu'un tableau a tester
