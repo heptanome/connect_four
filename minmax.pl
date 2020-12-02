@@ -37,7 +37,7 @@ call_minmax(Board, Player, Heur, BestBoard, BestVal) :-
     changePlayer(Player, Opponent),
     minmax(PossibleBoards, Heur, Opponent, 'max', 3, BestVal, BestBoard).
 
-minmax([Board], Heur, Player, MaximPlayer, 0, Val, _) :- 
+minmax([Board], Heur, Player, _, 0, Val, _) :- 
     changePlayer(Player, Opponent),
     value_of(Board, Opponent, Val, Heur), !.
 
