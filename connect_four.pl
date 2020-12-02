@@ -15,12 +15,16 @@ isBoardFull([]).
 isBoardFull([H|C]) :- isColumnFull(H), isBoardFull(C).
 
 % Usage : Appliquer le coup du joueur
-applyIt(Board,NewBoard) :- retract(board(Board)), assert(board(NewBoard)).
+applyIt(Board,NewBoard) :-
+    retract(board(Board)),
+    assert(board(NewBoard)).
 
 %IA ernvoie colonne complete
 % Usage : Calcule un coup optimum pour gagner une partie : IA renvoie une colonne complete avec son coup
 %ia(Board, BestNext, Value, Player, Heur) :- minmax(Board, BestNext, Value, Player, Heur).
-ia(Board, BestNext, Value, Player, Heur) :- call_alphabeta(Board, Player, Heur, BestNext, Value).
+ia(Board, BestNext, Value, Player, Heur) :-
+    %call_minmax(Board, Player, Heur, BestNext, Value).
+    call_alphabeta(Board, Player, Heur, BestNext, Value).
 
 % Usage : Récupérer le coup du joueur Humain
 readColumn(X) :-
@@ -30,9 +34,14 @@ readColumn(X) :-
     not(isColumnFull(Index)).
 
 %Game is over, we cut to stop the search, and display the winner.
-play(_,_,_) :- gameover(Winner), !, write('Game is Over. Winner: '), writeln(Winner), board(Board),displayBoard(Board).
-%The game is not over, we play the next turn
+play(_,_,_) :-
+    gameover(Winner), !,
+    write('Game is Over. Winner: '),
+    writeln(Winner),
+    board(Board),
+    displayBoard(Board).
 
+%The game is not over, we play the next turn
 % in case the player 1 is human
 % Heur 1: heuristic used by AI 1, same goes for Heur2
 play(Player, 'human', Heur2) :-
