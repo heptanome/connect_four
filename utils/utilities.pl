@@ -13,5 +13,6 @@ updateColumn(Column, NewColumn, Player) :-
 isColumnFull(Column) :-
     nth1(6, Column, Value), nonvar(Value).
 
+% Usage : Intervertir les numéros de joueur
 changePlayer('1','2').
 changePlayer('2','1').

@@ -20,7 +20,8 @@ printRow(Row, Board) :-
     writeln('').
 
 % Usage : Afficher le contenu de la case à l'indice N de la colonne C
-% c'est à dire soit un ' ' si la case est vide sinon le numéro du joueur (1 ou 2).
+%         c'est à dire soit un ' ' si la case est vide sinon le numéro du joueur (1 ou 2).
+%         Les numéros 1, 2 et les cases vides apparaitront jaune, rouge, noir.
 printVal(Column,Index) :-
     nth1(Index, Column, Value),
     var(Value),
