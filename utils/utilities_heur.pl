@@ -54,8 +54,8 @@ getAscendingDiagsCostList(Board, Player, List) :-
     reverse(Board, ReversedBoard),
     getDescendingDiagsCostList(ReversedBoard, Player, List).
 
-% Usage : Obtenir le nombre de jetons consécutifs alignés du joueur actuel 
-%         sur les diagonales descendantes numéro 4 à 9. 
+% Usage : Obtenir les diagonales descendantes du plateau numéro 4 à 9. Puis obtenir le
+%         nombre de jetons consécutifs alignés du joueur actuel sur ces diagonales. 
 %         On ne prend pas en compte les diagonales 1, 2, 3, 10, 11 et 12,
 %         car on ne peut aligner 4 jetons desssus.
 % getDescendingDiagsCostList(+Board, +Player, -List):
@@ -66,6 +66,14 @@ getDescendingDiagsCostList(Board, Player, List) :-
     getEveryDescDiags(Board, CompleteListDiags),
     sumDiag(Player, CompleteListDiags, List).
 
+% Usage : Obtenir le nombre de jetons consécutifs alignés du joueur actuel 
+%         sur les diagonales descendantes numéro 4 à 9. 
+%         On ne prend pas en compte les diagonales 1, 2, 3, 10, 11 et 12,
+%         car on ne peut aligner 4 jetons desssus.
+% sumDiag(Player, DiagsList, CostList):
+% - Player      : numéro du joueur actuel
+% - DiagsList   : liste contenant les diagonales descendantes N°4 à 9
+% - CostList    : liste des sommes de jetons consécutifs du joueur pour ces diagonales
 sumDiag(_, [], []).
 sumDiag(Player, [Diag|Rest], [MaxCostDiag|ListSum]) :-
     sum(Player, Diag, TransSum, LastSum, Position, ListCost),
@@ -87,7 +95,7 @@ sumDiag(Player, [Diag|Rest], [MaxCostDiag|ListSum]) :-
 %                     ex : [1,_,1,1,2,1,1] -> Sum = 2; [1,_,1,_,2,1,1] -> Sum = 2; [1,_,1,_,1,1,1] -> Sum = 3
 % - Sum2            : variable permettant à Sum de récupérer le max entre lui même et une autre variable
 % - TransitionalSum : nombre de jetons alignés du joueur sur une ligne délimité par les jetons du joueur adverse,
-%                     des bodures ou une case vide.A chaque réinitialisation de TransitionalSum, Sum prend sa valeur 
+%                     des bodures ou une case vide. A chaque réinitialisation de TransitionalSum, Sum prend sa valeur 
 %                     si TransitionalSum est plus grande.
 %                     ex : [1,1,_,...] -> TransitionalSum = 2; [1,_,...] -> TransitionalSum = 1; [_,_,1,1,1,2] -> TransitionalSum = 3
 % - FreedomDegree : nombre de case vides ou contenant des jetons adverses alignées (nb cases pouvant contenir un alignement adverse)

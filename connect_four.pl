@@ -21,9 +21,7 @@ applyIt(Board,NewBoard) :-
     retract(board(Board)),
     assert(board(NewBoard)).
 
-%IA ernvoie colonne complete
-% Usage : Calcule un coup optimum pour gagner une partie : IA renvoie une colonne complete avec son coup
-%ia(Board, BestNext, Value, Player, Heur) :- minmax(Board, BestNext, Value, Player, Heur).
+% Usage : Calcule un coup optimum pour gagner une partie : IA renvoie une colonne complete avec son coup.
 ia(Board, BestNext, Value, Player, Heur) :-
     %call_minmax(Board, Player, Heur, BestNext, Value).
     call_alphabeta(Board, Player, Heur, BestNext, Value).
@@ -79,7 +77,7 @@ play(Player, Heur1, Heur2) :-
     changePlayer(Player,NextPlayer),
     play(NextPlayer, Heur1, Heur2).
 
-%Joue le coup (pour l'instant par du principe que la colonne donnee n'est pas pleine
+% Usage : Jouer un coup.On suppose que la colonne jouée n'est pas pleine.
 playMove(Board, IndexColumn, NewBoard, P) :- 
     Board=NewBoard,
     nth1(IndexColumn, Board, Column),
@@ -87,7 +85,7 @@ playMove(Board, IndexColumn, NewBoard, P) :-
     nth1(IndexColumn, NewBoard, NewColumn).
 
 
-%Debut du jeu
+% Usage : Initialiser le jeu
 init :-
     length(C1,6),
     length(C2,6),
@@ -99,7 +97,7 @@ init :-
     abolish(board/1),
     assert(board([C1,C2,C3,C4,C5,C6,C7])).
 
-% lancer le jeu
+% Usage : Lancer le jeu
 start_game(Heur1, Heur2) :- init(), play('1', Heur1, Heur2).
 start_game(Heur1, Heur2, 'n') :- init(), play('1', Heur1, Heur2).
 
