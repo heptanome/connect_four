@@ -23,5 +23,5 @@ Les différents modes disponibles sont :
     * full\_alert   : une IA complète plus efficace
 
 Si le jeu est lancé avec un ou deux modes qui ne correspondent pas aux modes précisés ci-dessus, le mode par défaut sera utilisé. Il s'agit d'un mode de jeu aléatoire.
-    Pour le Mode1 uniquement, il est possible de mettre le mode 'human'. Le programme va alors demander à l'utilisateur le numéro de la colonne dans laquelle il souhaite jouer. Ce numéro varie de 1 à 7. Si l'utilisateur rentre une valeur qui n'est pas un entier compris entre 1 et 7, nous ne pouvons pas garantir le bon fonctionnement du programme.
-    Lorsqu'un joueur aligne 4 pions, le jeu s'arrête, le vainqueur est annoncé, et il est possible de rejouer en utilisant de nouveau la commande `start_game(Mode1,Mode2).`.
+Pour le Mode1 uniquement, il est possible de mettre le mode 'human'. Le programme va alors demander à l'utilisateur le numéro de la colonne dans laquelle il souhaite jouer. Ce numéro varie de 1 à 7. Si l'utilisateur rentre une valeur qui n'est pas un entier compris entre 1 et 7, nous ne pouvons pas garantir le bon fonctionnement du programme.
+Lorsqu'un joueur aligne 4 pions, le jeu s'arrête, le vainqueur est annoncé, et il est possible de rejouer en utilisant de nouveau la commande `start_game(Mode1,Mode2).`.
