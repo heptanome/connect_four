@@ -22,6 +22,16 @@ printRow(Row, Board) :-
 % Usage : Afficher le contenu de la case à l'indice N de la colonne C
 % c'est à dire soit un ' ' si la case est vide sinon le numéro du joueur (1 ou 2).
 printVal(Column,Index) :-
-    nth1(Index, Column, Value), var(Value), write('  '), ! .
+    nth1(Index, Column, Value),
+    var(Value),
+    ansi_format([bold,bg(black)], '  ', []), !.
+
 printVal(Column,Index) :-
-    nth1(Index,Column,Value), write(Value), write(' ').
+    nth1(Index,Column,Value),
+    Value = '1',
+    ansi_format([bold,fg(yellow),bg(black)], '~w ', [Value]).
+
+printVal(Column,Index) :-
+    nth1(Index,Column,Value),
+    Value = '2',
+    ansi_format([bold,fg(red),bg(black)], '~w ', [Value]).
