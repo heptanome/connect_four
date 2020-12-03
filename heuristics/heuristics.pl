@@ -24,7 +24,6 @@ heuristic_max(Board, Player, FinalCost) :-
     max_list(CostsListDescDiags, MaxCostDescDiags),
     getAscendingDiagsCostList(Board, Player, CostsListAscDiags),
     max_list(CostsListAscDiags, MaxCostAscDiags),
-    printAll(CostsListColumn, CostsListRow, CostsListDescDiags, CostsListAscDiags),
     FinalCost is -max(MaxCostColumn, max(MaxCostRow, max(MaxCostDescDiags, MaxCostAscDiags))).
     
 % Usage : Obtenir le coût de la dispotion actuelle du plateau en sommant le
