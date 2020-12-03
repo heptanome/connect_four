@@ -1,3 +1,5 @@
+:- module(connect_four, [init/0, start_game/2]).
+
 :- dynamic board/1.
 
 :- use_module(utils/displayBoard, [displayBoard/1]).
@@ -33,6 +35,11 @@ readColumn(X) :-
     nth1(Index, [1,2,3,4,5,6,7], X),
     not(isColumnFull(Index)).
 
+display_info(Board, Player) :-
+    write('New turn for: '),
+    writeln(Player),
+    displayBoard(Board).
+
 %Game is over, we cut to stop the search, and display the winner.
 play(_,_,_) :-
     gameover(Winner), !,
@@ -46,10 +53,8 @@ play(_,_,_) :-
 % Heur 1: heuristic used by AI 1, same goes for Heur2
 play(Player, 'human', Heur2) :-
     Player = '1',
-    write('New turn for:'),
-    writeln(Player),
     board(Board),
-    displayBoard(Board),
+    display_info(Board, Player),
     readColumn(IndexColumn),
     playMove(Board, IndexColumn, NewBoard, Player),
     applyIt(Board, NewBoard),
@@ -58,10 +63,8 @@ play(Player, 'human', Heur2) :-
 
 play(Player, Heur1, Heur2) :-
     Player = '1',
-    write('New turn for:'),
-    writeln(Player),
     board(Board),
-    displayBoard(Board),
+    display_info(Board, Player),
     ia(Board, NewBoard, _, Player, Heur1),
     applyIt(Board, NewBoard),
     changePlayer(Player,NextPlayer),
@@ -69,10 +72,8 @@ play(Player, Heur1, Heur2) :-
 
 play(Player, Heur1, Heur2) :-
     Player = '2',
-    write('New turn for:'),
-    writeln(Player),
     board(Board),
-    displayBoard(Board),
+    display_info(Board, Player),
     ia(Board, NewBoard, _, Player, Heur2),
     applyIt(Board, NewBoard),
     changePlayer(Player,NextPlayer),
@@ -100,4 +101,5 @@ init :-
 
 % lancer le jeu
 start_game(Heur1, Heur2) :- init(), play('1', Heur1, Heur2).
+start_game(Heur1, Heur2, 'n') :- init(), play('1', Heur1, Heur2).
 
