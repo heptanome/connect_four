@@ -25,8 +25,8 @@ applyIt(Board,NewBoard) :-
 % Usage : Calcule un coup optimum pour gagner une partie : IA renvoie une colonne complete avec son coup
 %ia(Board, BestNext, Value, Player, Heur) :- minmax(Board, BestNext, Value, Player, Heur).
 ia(Board, BestNext, Value, Player, Heur) :-
-    %call_minmax(Board, Player, Heur, BestNext, Value).
-    call_alphabeta(Board, Player, Heur, BestNext, Value).
+    call_minmax(Board, Player, Heur, BestNext, Value).
+    %call_alphabeta(Board, Player, Heur, BestNext, Value).
 
 % Usage : Récupérer le coup du joueur Humain
 readColumn(X) :-
