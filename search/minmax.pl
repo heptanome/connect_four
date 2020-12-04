@@ -4,13 +4,14 @@
 :- use_module(heuristics/heuristics, [heuristic_max/3, heuristic_aSum/3,
                                      heuristic_dSum/3, heuristic_fSum/3,
                                      heuristic_alert/4, heuristic_fAlert/3]).
-:- use_module(utils/utilities, [changePlayer/2, isColumnFull/1, updateColumn/3]).
+:- use_module(utils/utilities, [changePlayer/2, isColumnFull/1, updateColumn/3, gameover/1]).
 
 
 % Usage : Passer le board actuel dans Board, il renverra un NextBoard possible
 %         dans la variable NextBoard. Si IndexColonne n est pas specifie, il
 %         renverra tous les moves possibles atteignables
 possible_move(Board, NextBoard, Player) :-
+    not(gameover(_)),
     Board=NextBoard,
     nth1(IndexColumn, Board, Column),
     not(isColumnFull(Column)),

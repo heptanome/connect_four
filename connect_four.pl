@@ -8,10 +8,6 @@
 :- use_module(search/alphabeta, [call_alphabeta/5]).
 :- use_module(utils/utilities, [changePlayer/2, isColumnFull/1, updateColumn/3]).
 
-% Usage : Regarder si le jeu est fini
-gameover(Winner) :- board(Board), winner(Board, Winner), !.
-gameover('Draw') :- board(Board), isBoardFull(Board).
-
 % Usage : Vérifier si le plateau est plein
 isBoardFull([]).
 isBoardFull([H|C]) :- isColumnFull(H), isBoardFull(C).
