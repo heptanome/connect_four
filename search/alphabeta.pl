@@ -35,8 +35,7 @@ changeMaximizing('min', 'max').
 
 call_alphabeta(Board, Player, Heur, BestBoard, BestVal, Depth) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
-    changePlayer(Player, Opponent),
-    alphabeta(PossibleBoards, Heur, Opponent, 'max', Depth,
+    alphabeta(PossibleBoards, Heur, Player, 'min', Depth,
               BestVal, BestBoard, -9999, 9999).
 
 % specific to ALPHABETA, used to store the biggest A when branching

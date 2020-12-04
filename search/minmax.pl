@@ -38,8 +38,7 @@ changeMaximizing('min', 'max').
 % dans BestBoard
 call_minmax(Board, Player, Heur, BestBoard, BestVal, Depth) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
-    changePlayer(Player, Opponent),
-    minmax(PossibleBoards, Heur, Opponent, 'max', Depth, BestVal, BestBoard).
+    minmax(PossibleBoards, Heur, Player, 'min', Depth, BestVal, BestBoard).
 
 % MINMAX: cherche a partir d'une liste de tableaux ses enfants en placant
 % les pions du joueur et de l'ennemi chacun son tour puis en trouvant le
