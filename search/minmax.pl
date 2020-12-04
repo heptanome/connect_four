@@ -1,4 +1,4 @@
-:- module(minmax, [call_minmax/5]).
+:- module(minmax, [call_minmax/6]).
 
 
 :- use_module(heuristics/heuristics, [heuristic_max/3, heuristic_aSum/3,
@@ -36,10 +36,10 @@ changeMaximizing('min', 'max').
 % parametres (l'heuristique, le fait qu'on cherche a maximiser les points et
 % la profondeur de recherche (apres le 'max'). Le meilleur tableaux est stocke
 % dans BestBoard
-call_minmax(Board, Player, Heur, BestBoard, BestVal) :-
+call_minmax(Board, Player, Heur, BestBoard, BestVal, Depth) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
     changePlayer(Player, Opponent),
-    minmax(PossibleBoards, Heur, Opponent, 'max', 3, BestVal, BestBoard).
+    minmax(PossibleBoards, Heur, Opponent, 'max', Depth, BestVal, BestBoard).
 
 % MINMAX: cherche a partir d'une liste de tableaux ses enfants en placant
 % les pions du joueur et de l'ennemi chacun son tour puis en trouvant le

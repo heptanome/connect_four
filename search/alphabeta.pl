@@ -1,4 +1,4 @@
-:- module(alphabeta, [call_alphabeta/5]).
+:- module(alphabeta, [call_alphabeta/6]).
 
 
 :- use_module(heuristics/heuristics,
@@ -33,10 +33,10 @@ comp_best_val('min', Val1, _, Val2, Board2, Val2, Board2) :-
 changeMaximizing('max', 'min').
 changeMaximizing('min', 'max').
 
-call_alphabeta(Board, Player, Heur, BestBoard, BestVal) :-
+call_alphabeta(Board, Player, Heur, BestBoard, BestVal, Depth) :-
     findall(NextBoard, possible_move(Board, NextBoard, Player), PossibleBoards),
     changePlayer(Player, Opponent),
-    alphabeta(PossibleBoards, Heur, Opponent, 'max', 3,
+    alphabeta(PossibleBoards, Heur, Opponent, 'max', Depth,
               BestVal, BestBoard, -9999, 9999).
 
 % specific to ALPHABETA, used to store the biggest A when branching
