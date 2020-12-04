@@ -31,9 +31,9 @@ principal se nomme **connect_four**. Pour le charger, il faut lancer la commande
 `[connect_four].`
 
 Pour lancer une partie, il suffit de taper la commande
-`start_game(Mode1,Mode2).`, en précisant les valeurs souhaitées pour les
-différents modes de jeu. Par exemple, pour faire jouer un joueur humain contre
-une IA complète, il faut lancer : `start_game('human','full_alert').`.
+`start_game(Mode1,Mode2,Profondeur).`, en précisant les valeurs souhaitées pour les
+différents modes de jeu, et la profondeur. Par exemple, pour faire jouer un joueur humain contre
+une IA complète, il faut lancer : `start_game('human','full_alert',3).`. La profondeur doit être un nombre impair. Certaines heuristics seront plus efficaces avec une profondeur plus élevées. C'est par exemple le cas des deux heuristiques dites "complètes". À l'inverse, l'heuristique défensive sera plus efficace à une profondeur de 1.
 Les différents modes disponibles sont :
 
     * attack_max   : une IA offensive (va essayer de gagner sans se soucier du joueur adverse)
