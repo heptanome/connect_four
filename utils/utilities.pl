@@ -15,7 +15,7 @@ isColumnFull(Column) :-
 
 % Usage : Intervertir les numéros de joueur
 changePlayer('1','2').
-changePlayer('2','1').a
+changePlayer('2','1').
 
 % Usage : regarder si le jeu est fini
 gameover(Winner) :- board(Board), winner(Board,Winner, !.
